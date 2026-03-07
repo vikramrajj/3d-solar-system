@@ -848,19 +848,20 @@
       'Sun': `${TX}/sunmap.jpg`,
       'Mercury': `${TX}/mercurymap.jpg`,
       'Venus': `${TX}/venusmap.jpg`,
-      'Earth': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/earth_atmos_2048.jpg',
+      'Earth': `${TX}/earthmap1k.jpg`,
       'Mars': `${TX}/marsmap1k.jpg`,
       'Jupiter': `${TX}/jupitermap.jpg`,
       'Saturn': `${TX}/saturnmap.jpg`,
       'Uranus': `${TX}/uranusmap.jpg`,
       'Neptune': `${TX}/neptunemap.jpg`,
-      'Moon': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/moon_1024.jpg',
-      'EarthClouds': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/earth_clouds_1024.png',
+      'Moon': `${TX}/moonmap1k.jpg`,
+      'EarthClouds': `${TX}/earthcloudmap.jpg`,
       'EarthBump': `${TX}/earthbump1k.jpg`,
       'EarthSpec': `${TX}/earthspec1k.jpg`,
       'SaturnRing': `${TX}/saturnringpattern.gif`,
       'MercuryBump': `${TX}/mercurybump.jpg`,
       'MarsBump': `${TX}/marsbump1k.jpg`,
+      'MoonBump': `${TX}/moonbump1k.jpg`,
     };
 
     // ── Sun ──
@@ -1041,6 +1042,14 @@
             sMat.color.setHex(0xffffff);
             sMat.needsUpdate = true;
           }, undefined, () => { });
+          // Moon bump map for crater detail
+          if (PLANET_TEXTURES['MoonBump']) {
+            textureLoader.load(PLANET_TEXTURES['MoonBump'], bt => {
+              sMat.bumpMap = bt;
+              sMat.bumpScale = 0.12;
+              sMat.needsUpdate = true;
+            }, undefined, () => { });
+          }
         }
         sGroup.add(sMesh);
 
