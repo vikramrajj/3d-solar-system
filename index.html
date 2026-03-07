@@ -608,21 +608,21 @@
     const PLANETS = [
       {
         name: 'Mercury', type: 'Rocky Planet', color: '#b0b0b0', emissive: '#1a1a1a',
-        radius: 1.5, orbitRadius: 32, rotSpeed: 0.017, tilt: 0.034,
+        radius: 1.5, orbitRadius: 32, rotSpeed: 0.017, revSpeed: 4.14, tilt: 0.034,
         diam: '4,879 km', dist: '57.9M km', period: '88 days', day: '58.6 days', gravity: '3.7 m/s²', moons: '0',
         satellites: []
       },
 
       {
         name: 'Venus', type: 'Rocky Planet', color: '#e8c56b', emissive: '#3d2a00',
-        radius: 2.3, orbitRadius: 52, rotSpeed: -0.0041, tilt: 3.096,
+        radius: 2.3, orbitRadius: 52, rotSpeed: -0.0041, revSpeed: 1.62, tilt: 3.096,
         diam: '12,104 km', dist: '108.2M km', period: '225 days', day: '243 days (Rev)', gravity: '8.9 m/s²', moons: '0',
         satellites: []
       },
 
       {
         name: 'Earth', type: 'Rocky Planet', color: '#4a90d9', emissive: '#0a1a30',
-        radius: 2.5, orbitRadius: 74, rotSpeed: 1.0, tilt: 0.4101,
+        radius: 2.5, orbitRadius: 74, rotSpeed: 1.0, revSpeed: 1.0, tilt: 0.4101,
         diam: '12,742 km', dist: '149.6M km', period: '365 days', day: '24 hours', gravity: '9.8 m/s²', moons: '1',
         earth: true,
         satellites: [
@@ -632,7 +632,7 @@
 
       {
         name: 'Mars', type: 'Rocky Planet', color: '#c1440e', emissive: '#300800',
-        radius: 1.8, orbitRadius: 100, rotSpeed: 0.97, tilt: 0.4396,
+        radius: 1.8, orbitRadius: 100, rotSpeed: 0.97, revSpeed: 0.531, tilt: 0.4396,
         diam: '6,779 km', dist: '227.9M km', period: '687 days', day: '24.6 hours', gravity: '3.7 m/s²', moons: '2',
         satellites: [
           { name: 'Phobos', color: '#8a7a70', emissive: '#080604', radius: 0.22, orbitR: 2.9, speed: 28.0 },
@@ -642,7 +642,7 @@
 
       {
         name: 'Jupiter', type: 'Gas Giant', color: '#c88b3a', emissive: '#1a0800',
-        radius: 10.0, orbitRadius: 175, rotSpeed: 2.42, tilt: 0.0546, bands: true,
+        radius: 10.0, orbitRadius: 175, rotSpeed: 2.42, revSpeed: 0.084, tilt: 0.0546, bands: true,
         diam: '139,820 km', dist: '778.5M km', period: '11.9 yrs', day: '9.9 hours', gravity: '24.8 m/s²', moons: '95',
         satellites: [
           { name: 'Metis', color: '#887060', emissive: '#080400', radius: 0.14, orbitR: 11.5, speed: 22.0 },
@@ -658,7 +658,7 @@
 
       {
         name: 'Saturn', type: 'Gas Giant', color: '#e4d191', emissive: '#1a1400',
-        radius: 8.5, orbitRadius: 255, rotSpeed: 2.24, tilt: 0.4665, bands: true, rings: true,
+        radius: 8.5, orbitRadius: 255, rotSpeed: 2.24, revSpeed: 0.0338, tilt: 0.4665, bands: true, rings: true,
         diam: '116,460 km', dist: '1.43B km', period: '29.5 yrs', day: '10.7 hours', gravity: '10.4 m/s²', moons: '146',
         satellites: [
           { name: 'Mimas', color: '#d0c8c0', emissive: '#080808', radius: 0.26, orbitR: 11.0, speed: 5.0 },
@@ -675,7 +675,7 @@
 
       {
         name: 'Uranus', type: 'Ice Giant', color: '#7de8e8', emissive: '#003a3a',
-        radius: 5.4, orbitRadius: 330, rotSpeed: -1.39, tilt: 1.706, rings: true, ringsNarrow: true,
+        radius: 5.4, orbitRadius: 330, rotSpeed: -1.39, revSpeed: 0.0119, tilt: 1.706, rings: true, ringsNarrow: true,
         diam: '50,724 km', dist: '2.87B km', period: '84 yrs', day: '17.2 hours (Rev)', gravity: '8.7 m/s²', moons: '28',
         satellites: [
           { name: 'Miranda', color: '#a0a8b4', emissive: '#080808', radius: 0.22, orbitR: 7.5, speed: 3.5 },
@@ -688,7 +688,7 @@
 
       {
         name: 'Neptune', type: 'Ice Giant', color: '#3f54ba', emissive: '#000820',
-        radius: 5.0, orbitRadius: 404, rotSpeed: 1.49, tilt: 0.4944,
+        radius: 5.0, orbitRadius: 404, rotSpeed: 1.49, revSpeed: 0.006, tilt: 0.4944,
         diam: '49,244 km', dist: '4.50B km', period: '165 yrs', day: '16.1 hours', gravity: '11.2 m/s²', moons: '16',
         satellites: [
           { name: 'Naiad', color: '#8090a4', emissive: '#080810', radius: 0.14, orbitR: 6.0, speed: 5.0 },
@@ -805,9 +805,9 @@
     }
 
     // ── Orbit ring ──
-    function orbitLine(r, col = 0x1a3888, opa = .28) {
+    function orbitLine(r, col = 0x3060aa, opa = 0.55) {
       const pts = []; for (let i = 0; i <= 256; i++) { const a = i / 256 * Math.PI * 2; pts.push(new THREE.Vector3(Math.cos(a) * r, 0, Math.sin(a) * r)); }
-      return new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: opa }));
+      return new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: opa, linewidth: 2 }));
     }
 
     // ── Ring mesh (Saturn/Uranus) ──
@@ -1363,11 +1363,11 @@
         const jnow = julianDay(new Date().getUTCFullYear(), new Date().getUTCMonth() + 1, new Date().getUTCDate());
         // live mode: animate using simulation time offset
         planetObjs.forEach(p => {
-          p.angle += p.data.orbitRadius > 200 ? s * p.data.rotSpeed * .6 : s * (p.data.orbitRadius < 60 ? 0.018 : 0.01);
+          p.angle += p.data.revSpeed * s * 0.02;
           // crude continuous animation; real position updated below
           const x = Math.cos(p.angle) * p.data.orbitRadius, z = Math.sin(p.angle) * p.data.orbitRadius;
           p.group.position.set(x, 0, z);
-          p.mesh.rotation.y += p.data.rotSpeed * s * 60;
+          p.mesh.rotation.y += p.data.rotSpeed * s * 1.5;
           p.satObjs.forEach(sat => {
             const spd = sat.data.speed;
             sat.angle += spd * s * .18;
