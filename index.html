@@ -26,7 +26,8 @@
     }
 
     canvas {
-      display: block
+      display: block;
+      touch-action: none
     }
 
     /* ── HUD ── */
@@ -642,7 +643,7 @@
         diam: '12,742 km', dist: '149.6M km', period: '365 days', day: '24 hours', gravity: '9.8 m/s²', moons: '1',
         earth: true,
         satellites: [
-          { name: 'Moon', color: '#aaaaaa', emissive: '#111', radius: 0.68, orbitR: 6.0, speed: 13.4 },
+          { name: 'Moon', color: '#aaaaaa', emissive: '#111', radius: 0.68, orbitR: 6.0, speed: 1.0 },
         ]
       },
 
@@ -651,8 +652,8 @@
         radius: 1.8, orbitRadius: 100, rotSpeed: 0.97, revSpeed: 0.531, tilt: 0.4396,
         diam: '6,779 km', dist: '227.9M km', period: '687 days', day: '24.6 hours', gravity: '3.7 m/s²', moons: '2',
         satellites: [
-          { name: 'Phobos', color: '#8a7a70', emissive: '#080604', radius: 0.22, orbitR: 2.9, speed: 28.0 },
-          { name: 'Deimos', color: '#9a8a80', emissive: '#080604', radius: 0.16, orbitR: 4.5, speed: 13.0 },
+          { name: 'Phobos', color: '#8a7a70', emissive: '#080604', radius: 0.22, orbitR: 2.9, speed: 85.6 },
+          { name: 'Deimos', color: '#9a8a80', emissive: '#080604', radius: 0.16, orbitR: 4.5, speed: 21.6 },
         ]
       },
 
@@ -661,14 +662,14 @@
         radius: 10.0, orbitRadius: 175, rotSpeed: 2.42, revSpeed: 0.084, tilt: 0.0546, bands: true,
         diam: '139,820 km', dist: '778.5M km', period: '11.9 yrs', day: '9.9 hours', gravity: '24.8 m/s²', moons: '95',
         satellites: [
-          { name: 'Metis', color: '#887060', emissive: '#080400', radius: 0.14, orbitR: 11.5, speed: 22.0 },
-          { name: 'Amalthea', color: '#8a5a50', emissive: '#080400', radius: 0.30, orbitR: 13.5, speed: 14.0 },
-          { name: 'Thebe', color: '#907060', emissive: '#080400', radius: 0.18, orbitR: 14.5, speed: 10.0 },
-          { name: 'Io', color: '#e8c840', emissive: '#201000', radius: 0.65, orbitR: 16.5, speed: 6.0 },
-          { name: 'Europa', color: '#c8d8f0', emissive: '#080818', radius: 0.56, orbitR: 20.0, speed: 3.0 },
-          { name: 'Ganymede', color: '#9090a0', emissive: '#080808', radius: 0.84, orbitR: 26.0, speed: 1.5 },
-          { name: 'Callisto', color: '#686070', emissive: '#080808', radius: 0.78, orbitR: 33.0, speed: 0.9 },
-          { name: 'Himalia', color: '#706860', emissive: '#050404', radius: 0.12, orbitR: 40.0, speed: 0.3 },
+          { name: 'Metis', color: '#887060', emissive: '#080400', radius: 0.14, orbitR: 11.5, speed: 92.6 },
+          { name: 'Amalthea', color: '#8a5a50', emissive: '#080400', radius: 0.30, orbitR: 13.5, speed: 54.9 },
+          { name: 'Thebe', color: '#907060', emissive: '#080400', radius: 0.18, orbitR: 14.5, speed: 40.5 },
+          { name: 'Io', color: '#e8c840', emissive: '#201000', radius: 0.65, orbitR: 16.5, speed: 15.4 },
+          { name: 'Europa', color: '#c8d8f0', emissive: '#080818', radius: 0.56, orbitR: 20.0, speed: 7.7 },
+          { name: 'Ganymede', color: '#9090a0', emissive: '#080808', radius: 0.84, orbitR: 26.0, speed: 3.82 },
+          { name: 'Callisto', color: '#686070', emissive: '#080808', radius: 0.78, orbitR: 33.0, speed: 1.64 },
+          { name: 'Himalia', color: '#706860', emissive: '#050404', radius: 0.12, orbitR: 40.0, speed: 0.109 },
         ]
       },
 
@@ -677,15 +678,15 @@
         radius: 8.5, orbitRadius: 255, rotSpeed: 2.24, revSpeed: 0.0338, tilt: 0.4665, bands: true, rings: true,
         diam: '116,460 km', dist: '1.43B km', period: '29.5 yrs', day: '10.7 hours', gravity: '10.4 m/s²', moons: '146',
         satellites: [
-          { name: 'Mimas', color: '#d0c8c0', emissive: '#080808', radius: 0.26, orbitR: 11.0, speed: 5.0 },
-          { name: 'Enceladus', color: '#f0f4ff', emissive: '#080810', radius: 0.32, orbitR: 13.5, speed: 3.5 },
-          { name: 'Tethys', color: '#c8c4b8', emissive: '#080808', radius: 0.38, orbitR: 16.0, speed: 2.5 },
-          { name: 'Dione', color: '#c0bcb4', emissive: '#080808', radius: 0.40, orbitR: 19.0, speed: 1.7 },
-          { name: 'Rhea', color: '#b8b4ac', emissive: '#080808', radius: 0.44, orbitR: 23.0, speed: 1.0 },
-          { name: 'Titan', color: '#d4824a', emissive: '#200800', radius: 0.88, orbitR: 29.0, speed: 0.55 },
-          { name: 'Hyperion', color: '#a89880', emissive: '#080806', radius: 0.20, orbitR: 33.0, speed: 0.35 },
-          { name: 'Iapetus', color: '#907060', emissive: '#080806', radius: 0.42, orbitR: 39.0, speed: 0.18 },
-          { name: 'Phoebe', color: '#484840', emissive: '#040404', radius: 0.16, orbitR: 46.0, speed: 0.06 },
+          { name: 'Mimas', color: '#d0c8c0', emissive: '#080808', radius: 0.26, orbitR: 11.0, speed: 29.0 },
+          { name: 'Enceladus', color: '#f0f4ff', emissive: '#080810', radius: 0.32, orbitR: 13.5, speed: 19.9 },
+          { name: 'Tethys', color: '#c8c4b8', emissive: '#080808', radius: 0.38, orbitR: 16.0, speed: 14.5 },
+          { name: 'Dione', color: '#c0bcb4', emissive: '#080808', radius: 0.40, orbitR: 19.0, speed: 9.98 },
+          { name: 'Rhea', color: '#b8b4ac', emissive: '#080808', radius: 0.44, orbitR: 23.0, speed: 6.05 },
+          { name: 'Titan', color: '#d4824a', emissive: '#200800', radius: 0.88, orbitR: 29.0, speed: 1.71 },
+          { name: 'Hyperion', color: '#a89880', emissive: '#080806', radius: 0.20, orbitR: 33.0, speed: 1.28 },
+          { name: 'Iapetus', color: '#907060', emissive: '#080806', radius: 0.42, orbitR: 39.0, speed: 0.344 },
+          { name: 'Phoebe', color: '#484840', emissive: '#040404', radius: 0.16, orbitR: 46.0, speed: 0.05 },
         ]
       },
 
@@ -694,11 +695,11 @@
         radius: 5.4, orbitRadius: 330, rotSpeed: -1.39, revSpeed: 0.0119, tilt: 1.706, rings: true, ringsNarrow: true,
         diam: '50,724 km', dist: '2.87B km', period: '84 yrs', day: '17.2 hours (Rev)', gravity: '8.7 m/s²', moons: '28',
         satellites: [
-          { name: 'Miranda', color: '#a0a8b4', emissive: '#080808', radius: 0.22, orbitR: 7.5, speed: 3.5 },
-          { name: 'Ariel', color: '#b4b8c0', emissive: '#080808', radius: 0.36, orbitR: 9.5, speed: 2.0 },
-          { name: 'Umbriel', color: '#707480', emissive: '#080808', radius: 0.34, orbitR: 12.0, speed: 1.2 },
-          { name: 'Titania', color: '#a0a8b4', emissive: '#080808', radius: 0.44, orbitR: 15.5, speed: 0.7 },
-          { name: 'Oberon', color: '#908890', emissive: '#080808', radius: 0.40, orbitR: 19.0, speed: 0.45 },
+          { name: 'Miranda', color: '#a0a8b4', emissive: '#080808', radius: 0.22, orbitR: 7.5, speed: 19.3 },
+          { name: 'Ariel', color: '#b4b8c0', emissive: '#080808', radius: 0.36, orbitR: 9.5, speed: 10.8 },
+          { name: 'Umbriel', color: '#707480', emissive: '#080808', radius: 0.34, orbitR: 12.0, speed: 6.59 },
+          { name: 'Titania', color: '#a0a8b4', emissive: '#080808', radius: 0.44, orbitR: 15.5, speed: 3.14 },
+          { name: 'Oberon', color: '#908890', emissive: '#080808', radius: 0.40, orbitR: 19.0, speed: 2.03 },
         ]
       },
 
@@ -707,18 +708,18 @@
         radius: 5.0, orbitRadius: 404, rotSpeed: 1.49, revSpeed: 0.006, tilt: 0.4944,
         diam: '49,244 km', dist: '4.50B km', period: '165 yrs', day: '16.1 hours', gravity: '11.2 m/s²', moons: '16',
         satellites: [
-          { name: 'Naiad', color: '#8090a4', emissive: '#080810', radius: 0.14, orbitR: 6.0, speed: 5.0 },
-          { name: 'Thalassa', color: '#8090a8', emissive: '#080810', radius: 0.15, orbitR: 7.0, speed: 4.0 },
-          { name: 'Galatea', color: '#8494a8', emissive: '#080810', radius: 0.17, orbitR: 8.2, speed: 3.0 },
-          { name: 'Proteus', color: '#7888a0', emissive: '#080810', radius: 0.28, orbitR: 9.8, speed: 2.0 },
-          { name: 'Triton', color: '#b0d0e8', emissive: '#080810', radius: 0.62, orbitR: 13.0, speed: -1.5 },
-          { name: 'Nereid', color: '#9098a8', emissive: '#080810', radius: 0.18, orbitR: 22.0, speed: 0.25 },
+          { name: 'Naiad', color: '#8090a4', emissive: '#080810', radius: 0.14, orbitR: 6.0, speed: 92.9 },
+          { name: 'Thalassa', color: '#8090a8', emissive: '#080810', radius: 0.15, orbitR: 7.0, speed: 87.9 },
+          { name: 'Galatea', color: '#8494a8', emissive: '#080810', radius: 0.17, orbitR: 8.2, speed: 63.7 },
+          { name: 'Proteus', color: '#7888a0', emissive: '#080810', radius: 0.28, orbitR: 9.8, speed: 24.4 },
+          { name: 'Triton', color: '#b0d0e8', emissive: '#080810', radius: 0.62, orbitR: 13.0, speed: -4.65 },
+          { name: 'Nereid', color: '#9098a8', emissive: '#080810', radius: 0.18, orbitR: 22.0, speed: 0.076 },
         ]
       },
     ];
 
     // ═══════════════════════════════════════════
-    //  MINIMAL ORBIT CONTROLS
+    //  ORBIT CONTROLS (Mouse + Touch)
     // ═══════════════════════════════════════════
     THREE.OrbitControls = function (cam, dom) {
       this.camera = cam; this.domElement = dom; this.enabled = true;
@@ -733,11 +734,77 @@
       function initSph() { sph.setFromVector3(cam.position.clone().sub(self.target)); }
       initSph();
       function rl(a) { sd.theta -= a; } function ru(a) { sd.phi -= a; }
+
+      // ── Mouse Events ──
       dom.addEventListener('mousedown', md => { if (!self.enabled) return; if (md.button === 0) { st = 1; rs.set(md.clientX, md.clientY); } else if (md.button === 2) { st = 2; ps.set(md.clientX, md.clientY); } document.addEventListener('mousemove', mm); document.addEventListener('mouseup', mu); }, false);
       function mm(e) { if (!self.enabled) return; if (st === 1) { re.set(e.clientX, e.clientY); rd.subVectors(re, rs).multiplyScalar(self.rotateSpeed); let h = dom.clientHeight || window.innerHeight; rl(2 * Math.PI * rd.x / h); ru(2 * Math.PI * rd.y / h); rs.copy(re); } else if (st === 2) { pe.set(e.clientX, e.clientY); pd.subVectors(pe, ps).multiplyScalar(self.panSpeed); pan(pd.x, pd.y); ps.copy(pe); } }
       function mu() { st = 0; document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); }
       function pan(dx, dy) { let off = cam.position.clone().sub(self.target); let td = off.length() * Math.tan(cam.fov / 2 * Math.PI / 180); let h = dom.clientHeight || window.innerHeight; let v = new THREE.Vector3(); v.setFromMatrixColumn(cam.matrix, 0); v.multiplyScalar(-2 * dx * td / h); po.add(v); v.setFromMatrixColumn(cam.matrix, 1); v.multiplyScalar(2 * dy * td / h); po.add(v); }
-      dom.addEventListener('wheel', e => { if (!self.enabled) return; sc *= e.deltaY < 0 ? 1 / Math.pow(0.95, self.zoomSpeed) : Math.pow(0.95, self.zoomSpeed); }, false);
+      dom.addEventListener('wheel', e => { if (!self.enabled) return; e.preventDefault(); sc *= e.deltaY < 0 ? 1 / Math.pow(0.95, self.zoomSpeed) : Math.pow(0.95, self.zoomSpeed); }, { passive: false });
+      dom.addEventListener('contextmenu', e => e.preventDefault());
+
+      // ── Touch Events (Mobile) ──
+      let touchState = 0; // 0=none, 1=rotate, 2=pinch/pan
+      let prevTouchDist = 0;
+      let prevTouchCenter = new THREE.Vector2();
+      let touchStart = new THREE.Vector2();
+
+      dom.addEventListener('touchstart', e => {
+        if (!self.enabled) return;
+        e.preventDefault();
+        if (e.touches.length === 1) {
+          touchState = 1;
+          touchStart.set(e.touches[0].clientX, e.touches[0].clientY);
+        } else if (e.touches.length === 2) {
+          touchState = 2;
+          const dx = e.touches[1].clientX - e.touches[0].clientX;
+          const dy = e.touches[1].clientY - e.touches[0].clientY;
+          prevTouchDist = Math.sqrt(dx * dx + dy * dy);
+          prevTouchCenter.set(
+            (e.touches[0].clientX + e.touches[1].clientX) / 2,
+            (e.touches[0].clientY + e.touches[1].clientY) / 2
+          );
+        }
+      }, { passive: false });
+
+      dom.addEventListener('touchmove', e => {
+        if (!self.enabled) return;
+        e.preventDefault();
+        if (touchState === 1 && e.touches.length === 1) {
+          // Single finger → rotate
+          const tx = e.touches[0].clientX, ty = e.touches[0].clientY;
+          const dxr = (tx - touchStart.x) * self.rotateSpeed;
+          const dyr = (ty - touchStart.y) * self.rotateSpeed;
+          const h = dom.clientHeight || window.innerHeight;
+          rl(2 * Math.PI * dxr / h);
+          ru(2 * Math.PI * dyr / h);
+          touchStart.set(tx, ty);
+        } else if (touchState === 2 && e.touches.length === 2) {
+          // Two fingers → pinch zoom + pan
+          const dx = e.touches[1].clientX - e.touches[0].clientX;
+          const dy = e.touches[1].clientY - e.touches[0].clientY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          // Pinch zoom
+          if (prevTouchDist > 0) {
+            const ratio = prevTouchDist / dist;
+            sc *= Math.pow(ratio, self.zoomSpeed);
+          }
+          prevTouchDist = dist;
+          // Pan
+          const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+          const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+          const panDx = (cx - prevTouchCenter.x) * self.panSpeed;
+          const panDy = (cy - prevTouchCenter.y) * self.panSpeed;
+          pan(panDx, panDy);
+          prevTouchCenter.set(cx, cy);
+        }
+      }, { passive: false });
+
+      dom.addEventListener('touchend', e => {
+        touchState = 0;
+        prevTouchDist = 0;
+      }, false);
+
       this.update = function () { let off = cam.position.clone().sub(self.target); sph.setFromVector3(off); sph.theta += sd.theta; sph.phi += sd.phi; sph.phi = Math.max(0.04, Math.min(Math.PI - 0.04, sph.phi)); sph.radius *= sc; sph.radius = Math.max(self.minDistance, Math.min(self.maxDistance, sph.radius)); self.target.add(po); off.setFromSpherical(sph); cam.position.copy(self.target).add(off); cam.lookAt(self.target); if (self.enableDamping) { sd.theta *= (1 - self.dampingFactor); sd.phi *= (1 - self.dampingFactor); po.multiplyScalar(1 - self.dampingFactor); } else { sd.set(0, 0, 0); po.set(0, 0, 0); } sc = 1; };
       this.reset = function () { self.target.set(0, 0, 0); cam.position.set(0, 180, 430); cam.lookAt(0, 0, 0); sd.set(0, 0, 0); po.set(0, 0, 0); sc = 1; };
     };
@@ -1405,8 +1472,8 @@
           // Rotation: rotSpeed is relative to Earth (1.0 = 24h day)
           p.mesh.rotation.y += p.data.rotSpeed * s * 0.4;
           p.satObjs.forEach(sat => {
-            const spd = sat.data.speed;
-            sat.angle += spd * s * .18;
+            // Moon speed is relative to Earth's Moon (1.0 = 27.3 day period)
+            sat.angle += sat.data.speed * s * 0.03;
             sat.group.position.set(Math.cos(sat.angle) * sat.data.orbitR, 0, Math.sin(sat.angle) * sat.data.orbitR);
             sat.group.children.forEach(c => { if (c.isMesh) c.rotation.y += .012 * s * 60; });
           });
