@@ -841,39 +841,42 @@
     })();
 
     const textureLoader = new THREE.TextureLoader();
-    textureLoader.crossOrigin = "Anonymous";
 
-    const HIGH_RES_TEXTURES = {
-      'Sun': 'https://upload.wikimedia.org/wikipedia/commons/9/99/Map_of_the_full_sun.jpg',
-      'Mercury': 'https://upload.wikimedia.org/wikipedia/commons/9/9a/Cylindrical_Map_of_Mercury.jpg',
-      'Venus': 'https://upload.wikimedia.org/wikipedia/commons/1/1c/Venus_map_Magellan.jpg',
-      'Earth': 'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg',
-      'Mars': 'https://upload.wikimedia.org/wikipedia/commons/7/73/Mars_equirectangular_map.jpg',
-      'Jupiter': 'https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg',
-      'Saturn': 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Saturn_%28planet%29_large.jpg',
-      'Uranus': 'https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg',
-      'Neptune': 'https://upload.wikimedia.org/wikipedia/commons/5/56/Neptune_Full.jpg'
+    // Reliable texture sources with proper CORS support
+    const PLANET_TEXTURES = {
+      'Sun': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/sun.jpg',
+      'Mercury': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/mercury.jpg',
+      'Venus': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/venus_atmosphere.jpg',
+      'Earth': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/earth_atmos_2048.jpg',
+      'Mars': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/mars_1k_color.jpg',
+      'Jupiter': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/jupiter.jpg',
+      'Saturn': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/saturn.jpg',
+      'Uranus': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/uranus.jpg',
+      'Neptune': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/neptune.jpg',
+      'Moon': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/moon_1024.jpg',
+      'EarthClouds': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/earth_clouds_1024.png',
+      'SaturnRing': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/saturn_ring_alpha.png',
     };
 
     // ── Sun ──
     const sunG = new THREE.Group(); scene.add(sunG);
     [{ r: 12, c: 0xffcc33 }, { r: 16, c: 0xff8800, o: .055 }, { r: 22, c: 0xff4400, o: .028 }, { r: 32, c: 0xff2200, o: .012 }].forEach((l, i) => {
-      const m = new THREE.Mesh(new THREE.SphereGeometry(l.r, 48, 48), new THREE.MeshBasicMaterial({ color: l.c, transparent: i > 0, opacity: l.o || 1 }));
+      const m = new THREE.Mesh(new THREE.SphereGeometry(l.r, 64, 64), new THREE.MeshBasicMaterial({ color: l.c, transparent: i > 0, opacity: l.o || 1 }));
       sunG.add(m);
     });
     const sunMesh = sunG.children[0];
-    textureLoader.load(HIGH_RES_TEXTURES['Sun'], t => {
+    textureLoader.load(PLANET_TEXTURES['Sun'], t => {
       sunMesh.material.map = t;
       sunMesh.material.color.setHex(0xffffff);
       sunMesh.material.needsUpdate = true;
-    });
+    }, undefined, () => { /* Keep fallback color if texture fails */ });
 
     scene.add(new THREE.PointLight(0xfff5cc, 4.5, 2500, 0.8));
     scene.add(new THREE.AmbientLight(0x223355, 1.2));
 
-    // ── Texture helper ──
+    // ── Texture helper (fallback when CDN texture fails) ──
     function makeTex(hex, opts = {}) {
-      const S = 256, cv = document.createElement('canvas'); cv.width = S; cv.height = S;
+      const S = 512, cv = document.createElement('canvas'); cv.width = S; cv.height = S;
       const cx = cv.getContext('2d'), c = new THREE.Color(hex);
       const r = Math.round(c.r * 255), g = Math.round(c.g * 255), b = Math.round(c.b * 255);
       cx.fillStyle = `rgb(${r},${g},${b})`; cx.fillRect(0, 0, S, S);
@@ -932,23 +935,46 @@
       const ol = orbitLine(pd.orbitRadius);
       scene.add(ol); orbitLines.push(ol);
 
-      // Planet mesh
-      const tex = makeTex(pd.color, { bands: pd.bands, earth: pd.earth });
-      const pMat = new THREE.MeshPhongMaterial({ map: tex, color: new THREE.Color(pd.color), emissive: new THREE.Color(pd.emissive), emissiveIntensity: .14, shininess: pd.bands ? 6 : 20, specular: new THREE.Color(0x223355) });
-      const mesh = new THREE.Mesh(new THREE.SphereGeometry(pd.radius, 42, 42), pMat);
+      // Planet mesh — use MeshPhongMaterial with white base color so textures look true-to-life
+      const fallbackTex = makeTex(pd.color, { bands: pd.bands, earth: pd.earth });
+      const pMat = new THREE.MeshPhongMaterial({
+        map: fallbackTex,
+        color: 0xffffff,
+        emissive: new THREE.Color(pd.emissive),
+        emissiveIntensity: .06,
+        shininess: pd.bands ? 4 : 15,
+        specular: new THREE.Color(0x111122)
+      });
+      const mesh = new THREE.Mesh(new THREE.SphereGeometry(pd.radius, 64, 64), pMat);
       mesh.castShadow = true; mesh.receiveShadow = true; mesh.rotation.z = pd.tilt || 0;
 
-      // Photorealistic Texture Override
-      if (HIGH_RES_TEXTURES[pd.name]) {
-        textureLoader.load(HIGH_RES_TEXTURES[pd.name], t => {
+      // Load photorealistic texture from CDN
+      if (PLANET_TEXTURES[pd.name]) {
+        textureLoader.load(PLANET_TEXTURES[pd.name], t => {
           pMat.map = t;
-          pMat.color.setHex(0xffffff);
           pMat.needsUpdate = true;
+        }, undefined, () => {
+          console.warn(`Texture load failed for ${pd.name}, using procedural fallback`);
         });
       }
 
-      // Atmosphere (Earth)
-      if (pd.earth) { const atm = new THREE.Mesh(new THREE.SphereGeometry(pd.radius + .5, 32, 32), new THREE.MeshBasicMaterial({ color: 0x4488ff, transparent: true, opacity: .07 })); mesh.add(atm); }
+      // Atmosphere + Cloud layer (Earth)
+      if (pd.earth) {
+        // Atmosphere glow
+        const atm = new THREE.Mesh(
+          new THREE.SphereGeometry(pd.radius + .4, 64, 64),
+          new THREE.MeshBasicMaterial({ color: 0x6699ff, transparent: true, opacity: .08, side: THREE.BackSide })
+        );
+        mesh.add(atm);
+        // Cloud layer
+        textureLoader.load(PLANET_TEXTURES['EarthClouds'], ct => {
+          const cloudMesh = new THREE.Mesh(
+            new THREE.SphereGeometry(pd.radius + .15, 64, 64),
+            new THREE.MeshPhongMaterial({ map: ct, transparent: true, opacity: .35, depthWrite: false })
+          );
+          mesh.add(cloudMesh);
+        }, undefined, () => { });
+      }
 
       // Rings
       if (pd.rings) {
@@ -980,10 +1006,19 @@
         pGroup.add(sol); orbitLines.push(sol);
 
         // Satellite mesh
+        const sMat = new THREE.MeshPhongMaterial({ color: new THREE.Color(sd.color), emissive: new THREE.Color(sd.emissive), emissiveIntensity: .1, shininess: 8 });
         const sMesh = new THREE.Mesh(
-          new THREE.SphereGeometry(sd.radius, 18, 18),
-          new THREE.MeshPhongMaterial({ color: new THREE.Color(sd.color), emissive: new THREE.Color(sd.emissive), emissiveIntensity: .1, shininess: 8 })
+          new THREE.SphereGeometry(sd.radius, 32, 32),
+          sMat
         );
+        // Load Moon texture for Earth's Moon
+        if (sd.name === 'Moon' && PLANET_TEXTURES['Moon']) {
+          textureLoader.load(PLANET_TEXTURES['Moon'], t => {
+            sMat.map = t;
+            sMat.color.setHex(0xffffff);
+            sMat.needsUpdate = true;
+          }, undefined, () => { });
+        }
         sGroup.add(sMesh);
 
         // Satellite label
