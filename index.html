@@ -452,6 +452,8 @@
     <div class="stat"><span class="lbl">Orbital Period</span><span class="val" id="info-period">–</span></div>
     <div class="stat"><span class="lbl">Moons</span><span class="val" id="info-moons">–</span></div>
     <div class="stat"><span class="lbl">Gravity</span><span class="val" id="info-grav">–</span></div>
+    <button class="tp-btn" id="btn-focus" style="width:100%;margin-top:12px;background:rgba(80,160,255,.15)">🎯 Track
+      Camera</button>
   </div>
 
   <div id="tooltip"></div>
@@ -857,6 +859,9 @@
 
     renderer.domElement.addEventListener('click', () => doRaycast(true));
 
+    let selectedMesh = null;
+    let trackedBodyMesh = null;
+
     // Build flat lookup maps once after scene construction (called after planetObjs is populated)
     let planetMeshMap = [];
     let satMeshMap = [];
@@ -878,6 +883,7 @@
 
       if (hits.length) {
         const obj = hits[0].object;
+        if (click) selectedMesh = obj;
 
         if (obj === sunMesh) {
           // ── Sun ──
@@ -1026,7 +1032,7 @@
       });
       this.classList.toggle('active', !showLabels);
     });
-    document.getElementById('btn-reset').addEventListener('click', () => { controls.reset(); topDown = false; document.getElementById('btn-top').classList.remove('active'); });
+    document.getElementById('btn-reset').addEventListener('click', () => { trackedBodyMesh = null; controls.reset(); topDown = false; document.getElementById('btn-top').classList.remove('active'); });
     document.getElementById('btn-pause').addEventListener('click', function () {
       if (travelT !== null) { travelT = null; resetToNow(); return; }
       paused = !paused;
@@ -1035,11 +1041,24 @@
     });
     document.getElementById('btn-top').addEventListener('click', function () {
       topDown = !topDown;
-      if (topDown) { camera.position.set(0, 700, 0); camera.lookAt(0, 0, 0); }
-      else controls.reset();
+      if (topDown) { trackedBodyMesh = null; camera.position.set(0, 700, 0); camera.lookAt(0, 0, 0); }
+      else { trackedBodyMesh = null; controls.reset(); }
       this.classList.toggle('active', topDown);
     });
     document.getElementById('speed-slider').addEventListener('input', e => simSpeed = parseFloat(e.target.value));
+
+    document.getElementById('btn-focus').addEventListener('click', () => {
+      if (selectedMesh) {
+        trackedBodyMesh = selectedMesh;
+        topDown = false;
+        document.getElementById('btn-top').classList.remove('active');
+      }
+    });
+
+    // Disable tracking if user tries to manually pan
+    renderer.domElement.addEventListener('mousedown', (e) => {
+      if (e.button === 2) trackedBodyMesh = null; // Right click pan
+    });
 
     // ═══════════════════════════════════════════
     //  ANIMATION LOOP
@@ -1073,6 +1092,12 @@
             sat.group.children.forEach(c => { if (c.isMesh) c.rotation.y += .012 * s * 60; });
           });
         });
+      }
+
+      if (trackedBodyMesh) {
+        const targetPos = new THREE.Vector3();
+        trackedBodyMesh.getWorldPosition(targetPos);
+        controls.target.lerp(targetPos, 0.08);
       }
 
       doRaycast();
