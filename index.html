@@ -450,6 +450,7 @@
     <div class="stat"><span class="lbl">Diameter</span><span class="val" id="info-diam">–</span></div>
     <div class="stat"><span class="lbl">From Sun</span><span class="val" id="info-dist">–</span></div>
     <div class="stat"><span class="lbl">Orbital Period</span><span class="val" id="info-period">–</span></div>
+    <div class="stat"><span class="lbl">Rotation</span><span class="val" id="info-day">–</span></div>
     <div class="stat"><span class="lbl">Moons</span><span class="val" id="info-moons">–</span></div>
     <div class="stat"><span class="lbl">Gravity</span><span class="val" id="info-grav">–</span></div>
     <button class="tp-btn" id="btn-focus" style="width:100%;margin-top:12px;background:rgba(80,160,255,.15)">🎯 Track
@@ -607,22 +608,22 @@
     const PLANETS = [
       {
         name: 'Mercury', type: 'Rocky Planet', color: '#b0b0b0', emissive: '#1a1a1a',
-        radius: 1.5, orbitRadius: 32, rotSpeed: 0.003, tilt: 0.034,
-        diam: '4,879 km', dist: '57.9M km', period: '88 days', gravity: '3.7 m/s²', moons: '0',
+        radius: 1.5, orbitRadius: 32, rotSpeed: 0.017, tilt: 0.034,
+        diam: '4,879 km', dist: '57.9M km', period: '88 days', day: '58.6 days', gravity: '3.7 m/s²', moons: '0',
         satellites: []
       },
 
       {
         name: 'Venus', type: 'Rocky Planet', color: '#e8c56b', emissive: '#3d2a00',
-        radius: 2.3, orbitRadius: 52, rotSpeed: 0.0008, tilt: 3.096,
-        diam: '12,104 km', dist: '108.2M km', period: '225 days', gravity: '8.9 m/s²', moons: '0',
+        radius: 2.3, orbitRadius: 52, rotSpeed: -0.0041, tilt: 3.096,
+        diam: '12,104 km', dist: '108.2M km', period: '225 days', day: '243 days (Rev)', gravity: '8.9 m/s²', moons: '0',
         satellites: []
       },
 
       {
         name: 'Earth', type: 'Rocky Planet', color: '#4a90d9', emissive: '#0a1a30',
-        radius: 2.5, orbitRadius: 74, rotSpeed: 0.02, tilt: 0.4101,
-        diam: '12,742 km', dist: '149.6M km', period: '365 days', gravity: '9.8 m/s²', moons: '1',
+        radius: 2.5, orbitRadius: 74, rotSpeed: 1.0, tilt: 0.4101,
+        diam: '12,742 km', dist: '149.6M km', period: '365 days', day: '24 hours', gravity: '9.8 m/s²', moons: '1',
         earth: true,
         satellites: [
           { name: 'Moon', color: '#aaaaaa', emissive: '#111', radius: 0.68, orbitR: 6.0, speed: 13.4 },
@@ -631,8 +632,8 @@
 
       {
         name: 'Mars', type: 'Rocky Planet', color: '#c1440e', emissive: '#300800',
-        radius: 1.8, orbitRadius: 100, rotSpeed: 0.018, tilt: 0.4396,
-        diam: '6,779 km', dist: '227.9M km', period: '687 days', gravity: '3.7 m/s²', moons: '2',
+        radius: 1.8, orbitRadius: 100, rotSpeed: 0.97, tilt: 0.4396,
+        diam: '6,779 km', dist: '227.9M km', period: '687 days', day: '24.6 hours', gravity: '3.7 m/s²', moons: '2',
         satellites: [
           { name: 'Phobos', color: '#8a7a70', emissive: '#080604', radius: 0.22, orbitR: 2.9, speed: 28.0 },
           { name: 'Deimos', color: '#9a8a80', emissive: '#080604', radius: 0.16, orbitR: 4.5, speed: 13.0 },
@@ -641,8 +642,8 @@
 
       {
         name: 'Jupiter', type: 'Gas Giant', color: '#c88b3a', emissive: '#1a0800',
-        radius: 10.0, orbitRadius: 175, rotSpeed: 0.045, tilt: 0.0546, bands: true,
-        diam: '139,820 km', dist: '778.5M km', period: '11.9 yrs', gravity: '24.8 m/s²', moons: '95',
+        radius: 10.0, orbitRadius: 175, rotSpeed: 2.42, tilt: 0.0546, bands: true,
+        diam: '139,820 km', dist: '778.5M km', period: '11.9 yrs', day: '9.9 hours', gravity: '24.8 m/s²', moons: '95',
         satellites: [
           { name: 'Metis', color: '#887060', emissive: '#080400', radius: 0.14, orbitR: 11.5, speed: 22.0 },
           { name: 'Amalthea', color: '#8a5a50', emissive: '#080400', radius: 0.30, orbitR: 13.5, speed: 14.0 },
@@ -657,8 +658,8 @@
 
       {
         name: 'Saturn', type: 'Gas Giant', color: '#e4d191', emissive: '#1a1400',
-        radius: 8.5, orbitRadius: 255, rotSpeed: 0.038, tilt: 0.4665, bands: true, rings: true,
-        diam: '116,460 km', dist: '1.43B km', period: '29.5 yrs', gravity: '10.4 m/s²', moons: '146',
+        radius: 8.5, orbitRadius: 255, rotSpeed: 2.24, tilt: 0.4665, bands: true, rings: true,
+        diam: '116,460 km', dist: '1.43B km', period: '29.5 yrs', day: '10.7 hours', gravity: '10.4 m/s²', moons: '146',
         satellites: [
           { name: 'Mimas', color: '#d0c8c0', emissive: '#080808', radius: 0.26, orbitR: 11.0, speed: 5.0 },
           { name: 'Enceladus', color: '#f0f4ff', emissive: '#080810', radius: 0.32, orbitR: 13.5, speed: 3.5 },
@@ -674,8 +675,8 @@
 
       {
         name: 'Uranus', type: 'Ice Giant', color: '#7de8e8', emissive: '#003a3a',
-        radius: 5.4, orbitRadius: 330, rotSpeed: 0.03, tilt: 1.706, rings: true, ringsNarrow: true,
-        diam: '50,724 km', dist: '2.87B km', period: '84 yrs', gravity: '8.7 m/s²', moons: '28',
+        radius: 5.4, orbitRadius: 330, rotSpeed: -1.39, tilt: 1.706, rings: true, ringsNarrow: true,
+        diam: '50,724 km', dist: '2.87B km', period: '84 yrs', day: '17.2 hours (Rev)', gravity: '8.7 m/s²', moons: '28',
         satellites: [
           { name: 'Miranda', color: '#a0a8b4', emissive: '#080808', radius: 0.22, orbitR: 7.5, speed: 3.5 },
           { name: 'Ariel', color: '#b4b8c0', emissive: '#080808', radius: 0.36, orbitR: 9.5, speed: 2.0 },
@@ -687,8 +688,8 @@
 
       {
         name: 'Neptune', type: 'Ice Giant', color: '#3f54ba', emissive: '#000820',
-        radius: 5.0, orbitRadius: 404, rotSpeed: 0.032, tilt: 0.4944,
-        diam: '49,244 km', dist: '4.50B km', period: '165 yrs', gravity: '11.2 m/s²', moons: '16',
+        radius: 5.0, orbitRadius: 404, rotSpeed: 1.49, tilt: 0.4944,
+        diam: '49,244 km', dist: '4.50B km', period: '165 yrs', day: '16.1 hours', gravity: '11.2 m/s²', moons: '16',
         satellites: [
           { name: 'Naiad', color: '#8090a4', emissive: '#080810', radius: 0.14, orbitR: 6.0, speed: 5.0 },
           { name: 'Thalassa', color: '#8090a8', emissive: '#080810', radius: 0.15, orbitR: 7.0, speed: 4.0 },
@@ -961,18 +962,18 @@
 
         if (obj === sunMesh) {
           // ── Sun ──
-          tooltip.innerHTML = '☀ <b>Sun</b> — G-type Main Sequence Star';
+          tooltip.innerHTML = '☀ <b>Sun</b><br/><span style="font-size:0.7rem;color:#ccc">Rotates in 27 days | 8 Planets Base</span>';
           tooltip.classList.add('vis');
-          if (click) { setInfo('Sun', '', 'G-type Star', '1,391,000 km', '—', '—', '274 m/s²', '8 planets', '#ffcc33'); }
+          if (click) { setInfo('Sun', '', 'G-type Star', '1,391,000 km', '—', '—', '27 days', '274 m/s²', '8 planets', '#ffcc33'); }
 
         } else {
           const pIdx = planetMeshMap.indexOf(obj);
           if (pIdx >= 0) {
             // ── Planet hit ──
             const pd = planetObjs[pIdx].data;
-            tooltip.innerHTML = `🪐 <b>${pd.name}</b> — ${pd.type}`;
+            tooltip.innerHTML = `🪐 <b>${pd.name}</b><br/><span style="font-size:0.7rem;color:#ccc">Orbital Year: ${pd.period} | Day: ${pd.day} | ${pd.moons} Moons</span>`;
             tooltip.classList.add('vis');
-            if (click) { setInfo(pd.name, '', pd.type, pd.diam, pd.dist, pd.period, pd.gravity, pd.moons, pd.color); }
+            if (click) { setInfo(pd.name, '', pd.type, pd.diam, pd.dist, pd.period, pd.day, pd.gravity, pd.moons, pd.color); }
           } else {
             // ── Satellite hit ──
             const sIdx = allSatMeshes.indexOf(obj);
@@ -991,6 +992,7 @@
                   approxDiam,
                   `Orbits ${sat.parentName}`,
                   `~${(sat.data.orbitR * 10000).toFixed(0)} km`,
+                  'Tidally Locked',
                   '—',
                   '0',
                   sat.data.color
@@ -1128,7 +1130,7 @@
     document.getElementById('close-modal').addEventListener('mouseenter', function () { this.style.color = '#fff'; });
     document.getElementById('close-modal').addEventListener('mouseleave', function () { this.style.color = 'rgba(126,232,250,0.8)'; });
 
-    function setInfo(name, subtitle, type, diam, dist, period, grav, moons, col) {
+    function setInfo(name, subtitle, type, diam, dist, period, day, grav, moons, col) {
       document.getElementById('info-name').textContent = name;
       // Show optional subtitle (e.g. "Moon of Saturn") below the name
       let sub = document.getElementById('info-subtitle');
@@ -1147,6 +1149,7 @@
       if (distLabel) distLabel.textContent = subtitle ? 'Orbit radius' : 'From Sun';
       document.getElementById('info-dist').textContent = dist;
       document.getElementById('info-period').textContent = period;
+      document.getElementById('info-day').textContent = day;
       document.getElementById('info-grav').textContent = grav;
       document.getElementById('info-moons').textContent = moons;
       document.getElementById('info-dot').style.background = col;
