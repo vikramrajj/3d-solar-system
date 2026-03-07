@@ -842,20 +842,25 @@
 
     const textureLoader = new THREE.TextureLoader();
 
-    // Reliable texture sources with proper CORS support
+    // Reliable texture sources with proper CORS support (jeromeetienne/threex.planets via jsDelivr)
+    const TX = 'https://cdn.jsdelivr.net/gh/jeromeetienne/threex.planets/images';
     const PLANET_TEXTURES = {
-      'Sun': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/sun.jpg',
-      'Mercury': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/mercury.jpg',
-      'Venus': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/venus_atmosphere.jpg',
+      'Sun': `${TX}/sunmap.jpg`,
+      'Mercury': `${TX}/mercurymap.jpg`,
+      'Venus': `${TX}/venusmap.jpg`,
       'Earth': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/earth_atmos_2048.jpg',
-      'Mars': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/mars_1k_color.jpg',
-      'Jupiter': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/jupiter.jpg',
-      'Saturn': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/saturn.jpg',
-      'Uranus': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/uranus.jpg',
-      'Neptune': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/neptune.jpg',
+      'Mars': `${TX}/marsmap1k.jpg`,
+      'Jupiter': `${TX}/jupitermap.jpg`,
+      'Saturn': `${TX}/saturnmap.jpg`,
+      'Uranus': `${TX}/uranusmap.jpg`,
+      'Neptune': `${TX}/neptunemap.jpg`,
       'Moon': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/moon_1024.jpg',
       'EarthClouds': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/earth_clouds_1024.png',
-      'SaturnRing': 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r134/examples/textures/planets/saturn_ring_alpha.png',
+      'EarthBump': `${TX}/earthbump1k.jpg`,
+      'EarthSpec': `${TX}/earthspec1k.jpg`,
+      'SaturnRing': `${TX}/saturnringpattern.gif`,
+      'MercuryBump': `${TX}/mercurybump.jpg`,
+      'MarsBump': `${TX}/marsbump1k.jpg`,
     };
 
     // ── Sun ──
@@ -956,6 +961,24 @@
         }, undefined, () => {
           console.warn(`Texture load failed for ${pd.name}, using procedural fallback`);
         });
+      }
+      // Load bump maps for surface detail (craters, mountains)
+      const bumpKey = pd.name + 'Bump';
+      if (PLANET_TEXTURES[bumpKey]) {
+        textureLoader.load(PLANET_TEXTURES[bumpKey], bt => {
+          pMat.bumpMap = bt;
+          pMat.bumpScale = pd.name === 'Earth' ? 0.08 : 0.15;
+          pMat.needsUpdate = true;
+        }, undefined, () => { });
+      }
+      // Load specular map for Earth (ocean reflections)
+      if (pd.name === 'Earth' && PLANET_TEXTURES['EarthSpec']) {
+        textureLoader.load(PLANET_TEXTURES['EarthSpec'], st => {
+          pMat.specularMap = st;
+          pMat.specular = new THREE.Color(0x333333);
+          pMat.shininess = 25;
+          pMat.needsUpdate = true;
+        }, undefined, () => { });
       }
 
       // Atmosphere + Cloud layer (Earth)
@@ -1089,7 +1112,10 @@
               <b>System:</b> 8 planets, 5 dwarf planets
             </div>`;
           tooltip.classList.add('vis');
-          if (click) { setInfo('Sun', '', 'G-type Star', '1,391,000 km', '—', '—', '27 days', '274 m/s²', '8 planets', '#ffcc33'); }
+          if (click) {
+            setInfo('Sun', '', 'G-type Star', '1,391,000 km', '—', '—', '27 days', '274 m/s²', '8 planets', '#ffcc33');
+            flyToBody(sunMesh);
+          }
 
         } else {
           const pIdx = planetMeshMap.indexOf(obj);
@@ -1105,7 +1131,10 @@
                 <b>Moons:</b> ${pd.moons} &nbsp;·&nbsp; <b>Gravity:</b> ${pd.gravity}
               </div>`;
             tooltip.classList.add('vis');
-            if (click) { setInfo(pd.name, '', pd.type, pd.diam, pd.dist, pd.period, pd.day, pd.gravity, pd.moons, pd.color); }
+            if (click) {
+              setInfo(pd.name, '', pd.type, pd.diam, pd.dist, pd.period, pd.day, pd.gravity, pd.moons, pd.color);
+              flyToBody(obj);
+            }
           } else {
             const sIdx = allSatMeshes.indexOf(obj);
             if (sIdx >= 0) {
@@ -1133,6 +1162,7 @@
                   '0',
                   sat.data.color
                 );
+                flyToBody(obj);
               }
             }
           }
@@ -1436,7 +1466,7 @@
       });
       this.classList.toggle('active', !showLabels);
     });
-    document.getElementById('btn-reset').addEventListener('click', () => { trackedBodyMesh = null; controls.reset(); topDown = false; document.getElementById('btn-top').classList.remove('active'); });
+    document.getElementById('btn-reset').addEventListener('click', () => { trackedBodyMesh = null; flyToTarget = null; controls.reset(); topDown = false; document.getElementById('btn-top').classList.remove('active'); });
     document.getElementById('btn-pause').addEventListener('click', function () {
       if (travelT !== null) { travelT = null; resetToNow(); return; }
       paused = !paused;
@@ -1470,15 +1500,40 @@
 
     document.getElementById('btn-focus').addEventListener('click', () => {
       if (selectedMesh) {
-        trackedBodyMesh = selectedMesh;
-        topDown = false;
-        document.getElementById('btn-top').classList.remove('active');
+        flyToBody(selectedMesh);
       }
     });
 
+    // ── Fly-to-planet system ──
+    let flyToTarget = null;  // { mesh, radius }
+    let flyProgress = 0;
+    let flyStartPos = null;
+    let flyStartTarget = null;
+
+    function flyToBody(mesh) {
+      // Find the planet data to determine radius for close-up distance
+      let bodyRadius = 5; // default
+      for (const p of planetObjs) {
+        if (p.mesh === mesh) { bodyRadius = p.data.radius; break; }
+        for (const s of p.satObjs) {
+          if (s.mesh === mesh) { bodyRadius = s.data.radius; break; }
+        }
+      }
+      if (mesh === sunMesh) bodyRadius = 12;
+
+      trackedBodyMesh = mesh;
+      topDown = false;
+      document.getElementById('btn-top').classList.remove('active');
+
+      flyToTarget = { mesh, radius: bodyRadius };
+      flyProgress = 0;
+      flyStartPos = camera.position.clone();
+      flyStartTarget = controls.target.clone();
+    }
+
     // Disable tracking if user tries to manually pan
     renderer.domElement.addEventListener('mousedown', (e) => {
-      if (e.button === 2) trackedBodyMesh = null; // Right click pan
+      if (e.button === 2) { trackedBodyMesh = null; flyToTarget = null; } // Right click pan
     });
 
     // ═══════════════════════════════════════════
@@ -1515,7 +1570,25 @@
         });
       }
 
-      if (trackedBodyMesh) {
+      // ── Fly-to animation ──
+      if (flyToTarget) {
+        flyProgress = Math.min(flyProgress + dt * 0.7, 1.0);  // ~1.5s to complete
+        const ease = 1 - Math.pow(1 - flyProgress, 3); // ease-out cubic
+
+        const bodyWorldPos = new THREE.Vector3();
+        flyToTarget.mesh.getWorldPosition(bodyWorldPos);
+
+        // Target camera position: offset from body center by 3x radius
+        const closeUpDist = flyToTarget.radius * 3.5;
+        const camTarget = bodyWorldPos.clone().add(new THREE.Vector3(closeUpDist * 0.6, closeUpDist * 0.4, closeUpDist * 0.7));
+
+        camera.position.lerpVectors(flyStartPos, camTarget, ease);
+        controls.target.lerpVectors(flyStartTarget, bodyWorldPos, ease);
+
+        if (flyProgress >= 1.0) {
+          flyToTarget = null; // Animation complete, regular tracking takes over
+        }
+      } else if (trackedBodyMesh) {
         const targetPos = new THREE.Vector3();
         trackedBodyMesh.getWorldPosition(targetPos);
         controls.target.lerp(targetPos, 0.08);
