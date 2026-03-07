@@ -506,6 +506,22 @@
     <input type="range" id="speed-slider" min="0.05" max="8" step="0.05" value="1" />
   </div>
 
+  <!-- NASA EXPLORER MODAL -->
+  <div id="nasa-modal"
+    style="display:none;position:fixed;inset:0;background:rgba(0,4,14,0.94);z-index:999;flex-direction:column;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(15px);opacity:0;transition:opacity 0.3s">
+    <button id="close-modal"
+      style="position:absolute;top:25px;right:35px;background:none;border:none;color:rgba(126,232,250,0.8);font-size:42px;cursor:pointer;transition:color 0.2s">&times;</button>
+    <h2 id="modal-title"
+      style="color:#80ff72;font-family:'Orbitron',sans-serif;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.1em;font-size:1.8rem">
+    </h2>
+    <p
+      style="color:rgba(200,220,255,0.6);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:30px">
+      High Resolution NASA Archives</p>
+    <div id="modal-gallery"
+      style="display:flex;flex-wrap:wrap;gap:20px;max-width:90vw;max-height:75vh;overflow-y:auto;justify-content:center;padding:10px">
+    </div>
+  </div>
+
   <div id="legend">
     <div class="leg">
       <div class="leg-dot" style="background:#ffcc33"></div>Star (Sun)
@@ -726,6 +742,20 @@
       scene.add(new THREE.Points(g, new THREE.PointsMaterial({ size: 1.1, sizeAttenuation: true, vertexColors: true, transparent: true, opacity: .85 })));
     })();
 
+    const textureLoader = new THREE.TextureLoader();
+    textureLoader.crossOrigin = "Anonymous";
+
+    const HIGH_RES_TEXTURES = {
+      'Sun': 'https://upload.wikimedia.org/wikipedia/commons/9/99/Map_of_the_full_sun.jpg',
+      'Venus': 'https://upload.wikimedia.org/wikipedia/commons/1/1c/Venus_map_Magellan.jpg',
+      'Earth': 'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg',
+      'Mars': 'https://upload.wikimedia.org/wikipedia/commons/7/73/Mars_equirectangular_map.jpg',
+      'Jupiter': 'https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg',
+      'Saturn': 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Saturn_%28planet%29_large.jpg',
+      'Uranus': 'https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg',
+      'Neptune': 'https://upload.wikimedia.org/wikipedia/commons/5/56/Neptune_Full.jpg'
+    };
+
     // ── Sun ──
     const sunG = new THREE.Group(); scene.add(sunG);
     [{ r: 12, c: 0xffcc33 }, { r: 16, c: 0xff8800, o: .055 }, { r: 22, c: 0xff4400, o: .028 }, { r: 32, c: 0xff2200, o: .012 }].forEach((l, i) => {
@@ -733,6 +763,12 @@
       sunG.add(m);
     });
     const sunMesh = sunG.children[0];
+    textureLoader.load(HIGH_RES_TEXTURES['Sun'], t => {
+      sunMesh.material.map = t;
+      sunMesh.material.color.setHex(0xffffff);
+      sunMesh.material.needsUpdate = true;
+    });
+
     scene.add(new THREE.PointLight(0xfff5cc, 3.5, 2000, 1.0));
     scene.add(new THREE.AmbientLight(0x111133, .7));
 
@@ -799,11 +835,18 @@
 
       // Planet mesh
       const tex = makeTex(pd.color, { bands: pd.bands, earth: pd.earth });
-      const mesh = new THREE.Mesh(
-        new THREE.SphereGeometry(pd.radius, 42, 42),
-        new THREE.MeshPhongMaterial({ map: tex, color: new THREE.Color(pd.color), emissive: new THREE.Color(pd.emissive), emissiveIntensity: .14, shininess: pd.bands ? 6 : 20, specular: new THREE.Color(0x223355) })
-      );
+      const pMat = new THREE.MeshPhongMaterial({ map: tex, color: new THREE.Color(pd.color), emissive: new THREE.Color(pd.emissive), emissiveIntensity: .14, shininess: pd.bands ? 6 : 20, specular: new THREE.Color(0x223355) });
+      const mesh = new THREE.Mesh(new THREE.SphereGeometry(pd.radius, 42, 42), pMat);
       mesh.castShadow = true; mesh.receiveShadow = true; mesh.rotation.z = pd.tilt || 0;
+
+      // Photorealistic Texture Override
+      if (HIGH_RES_TEXTURES[pd.name]) {
+        textureLoader.load(HIGH_RES_TEXTURES[pd.name], t => {
+          pMat.map = t;
+          pMat.color.setHex(0xffffff);
+          pMat.needsUpdate = true;
+        });
+      }
 
       // Atmosphere (Earth)
       if (pd.earth) { const atm = new THREE.Mesh(new THREE.SphereGeometry(pd.radius + .5, 32, 32), new THREE.MeshBasicMaterial({ color: 0x4488ff, transparent: true, opacity: .07 })); mesh.add(atm); }
@@ -947,12 +990,16 @@
       }
     }
 
+    let currentNASAData = null;
+
     // ── NASA Image API ──
     async function fetchNASAImage(query) {
       const container = document.getElementById('nasa-image-container');
       const imgEL = document.getElementById('nasa-image');
+      currentNASAData = null;
       container.style.display = 'block';
       imgEL.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJyZ2JhKDIwLDMwLDcwLDAuNSkiLz48L3N2Zz4='; // subtle dark blue loading state
+      imgEL.style.cursor = 'default';
 
       let q = query;
       if (query === 'Sun') q = 'Sun flare coronal';
@@ -962,9 +1009,13 @@
         const res = await fetch(`https://images-api.nasa.gov/search?q=${encodeURIComponent(q)}&media_type=image`);
         const data = await res.json();
         if (data.collection && data.collection.items.length > 0) {
+          currentNASAData = data.collection.items;
           // Grab a random image from the top 3 best matching results
-          const item = data.collection.items[Math.floor(Math.random() * Math.min(3, data.collection.items.length))];
+          const item = currentNASAData[Math.floor(Math.random() * Math.min(3, currentNASAData.length))];
           imgEL.src = item.links[0].href;
+          imgEL.style.cursor = 'pointer';
+          imgEL.title = 'Click to open High-Res NASA Gallery';
+          imgEL.onclick = () => openNASAModal(query);
         } else {
           container.style.display = 'none';
         }
@@ -973,6 +1024,47 @@
         console.error("NASA API Error:", e);
       }
     }
+
+    function openNASAModal(title) {
+      if (!currentNASAData) return;
+      document.getElementById('modal-title').textContent = title;
+      const gallery = document.getElementById('modal-gallery');
+      gallery.innerHTML = '';
+
+      // Render up to 12 high-res images from the current fetch results
+      currentNASAData.slice(0, 12).forEach(item => {
+        if (item.links && item.links.length > 0) {
+          const imgWrap = document.createElement('div');
+          imgWrap.style.cssText = 'background:rgba(20,30,70,0.5);border:1px solid rgba(110,160,255,.2);border-radius:8px;padding:6px;width:320px;text-align:center;display:flex;flex-direction:column;justify-content:space-between';
+
+          const img = document.createElement('img');
+          img.src = item.links[0].href;
+          img.style.cssText = 'width:100%;height:220px;object-fit:cover;border-radius:4px;margin-bottom:8px';
+
+          const desc = document.createElement('p');
+          const titleText = item.data && item.data[0] ? item.data[0].title : '';
+          desc.textContent = titleText.length > 60 ? titleText.substring(0, 60) + '...' : titleText;
+          desc.style.cssText = 'font-size:0.65rem;color:#b4d4ff;margin:0;line-height:1.4';
+
+          imgWrap.appendChild(img);
+          imgWrap.appendChild(desc);
+          gallery.appendChild(imgWrap);
+        }
+      });
+
+      const modal = document.getElementById('nasa-modal');
+      modal.style.display = 'flex';
+      setTimeout(() => modal.style.opacity = '1', 10);
+    }
+
+    document.getElementById('close-modal').addEventListener('click', () => {
+      const modal = document.getElementById('nasa-modal');
+      modal.style.opacity = '0';
+      setTimeout(() => modal.style.display = 'none', 300);
+    });
+
+    document.getElementById('close-modal').addEventListener('mouseenter', function () { this.style.color = '#fff'; });
+    document.getElementById('close-modal').addEventListener('mouseleave', function () { this.style.color = 'rgba(126,232,250,0.8)'; });
 
     function setInfo(name, subtitle, type, diam, dist, period, grav, moons, col) {
       document.getElementById('info-name').textContent = name;
