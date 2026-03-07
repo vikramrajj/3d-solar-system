@@ -1572,7 +1572,8 @@
           p.mesh.rotation.y += p.data.rotSpeed * s * 0.4;
           p.satObjs.forEach(sat => {
             // Moon speed is relative to Earth's Moon (1.0 = 27.3 day period)
-            sat.angle += sat.data.speed * s * 0.03;
+            // Multiplier 0.012 keeps relative ratios accurate while visually comfortable
+            sat.angle += sat.data.speed * s * 0.012;
             sat.group.position.set(Math.cos(sat.angle) * sat.data.orbitR, 0, Math.sin(sat.angle) * sat.data.orbitR);
             sat.group.children.forEach(c => { if (c.isMesh) c.rotation.y += .012 * s * 60; });
           });
