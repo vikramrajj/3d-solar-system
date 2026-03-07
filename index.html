@@ -458,10 +458,19 @@
       style="display:none;margin-top:12px;border-top:1px solid rgba(110,160,255,.2);padding-top:12px;text-align:center">
       <p
         style="font-size:.55rem;color:rgba(200,220,255,.45);letter-spacing:.1em;margin-bottom:6px;text-transform:uppercase">
-        NASA Image Archive 🛰</p>
-      <img id="nasa-image" src=""
-        style="width:100%;border-radius:6px;max-height:110px;object-fit:cover;border:1px solid rgba(110,160,255,.15)"
-        alt="NASA API" />
+        NASA Image Archive 🛰
+      </p>
+      <div
+        style="position:relative;width:100%;height:110px;overflow:hidden;border-radius:6px;border:1px solid rgba(110,160,255,.15);">
+        <img id="nasa-image" src="" style="width:100%;height:100%;object-fit:cover;" alt="NASA API" />
+        <button id="nasa-prev"
+          style="position:absolute;left:4px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.2);color:white;cursor:pointer;padding:4px 8px;border-radius:4px;display:none;font-size:10px;">&#10094;</button>
+        <button id="nasa-next"
+          style="position:absolute;right:4px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.2);color:white;cursor:pointer;padding:4px 8px;border-radius:4px;display:none;font-size:10px;">&#10095;</button>
+        <div id="nasa-counter"
+          style="position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,0.8);font-size:0.55rem;padding:2px 5px;border-radius:4px;color:#fff;display:none;">
+        </div>
+      </div>
     </div>
   </div>
 
@@ -744,7 +753,7 @@
       const g = new THREE.BufferGeometry();
       g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
       g.setAttribute('color', new THREE.BufferAttribute(col, 3));
-      scene.add(new THREE.Points(g, new THREE.PointsMaterial({ size: 1.1, sizeAttenuation: true, vertexColors: true, transparent: true, opacity: .85 })));
+      scene.add(new THREE.Points(g, new THREE.PointsMaterial({ size: 1.8, sizeAttenuation: true, vertexColors: true, transparent: true, opacity: 1.0 })));
     })();
 
     const textureLoader = new THREE.TextureLoader();
@@ -774,8 +783,8 @@
       sunMesh.material.needsUpdate = true;
     });
 
-    scene.add(new THREE.PointLight(0xfff5cc, 3.5, 2000, 1.0));
-    scene.add(new THREE.AmbientLight(0x111133, .7));
+    scene.add(new THREE.PointLight(0xfff5cc, 4.5, 2500, 0.8));
+    scene.add(new THREE.AmbientLight(0x223355, 1.2));
 
     // ── Texture helper ──
     function makeTex(hex, opts = {}) {
@@ -996,15 +1005,27 @@
     }
 
     let currentNASAData = null;
+    let currentNASAIndex = 0;
+    let currentNASAQuery = '';
 
     // ── NASA Image API ──
     async function fetchNASAImage(query) {
       const container = document.getElementById('nasa-image-container');
       const imgEL = document.getElementById('nasa-image');
+      const btnPrev = document.getElementById('nasa-prev');
+      const btnNext = document.getElementById('nasa-next');
+      const lblCount = document.getElementById('nasa-counter');
+
       currentNASAData = null;
+      currentNASAIndex = 0;
+      currentNASAQuery = query;
+
       container.style.display = 'block';
       imgEL.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJyZ2JhKDIwLDMwLDcwLDAuNSkiLz48L3N2Zz4='; // subtle dark blue loading state
       imgEL.style.cursor = 'default';
+      btnPrev.style.display = 'none';
+      btnNext.style.display = 'none';
+      lblCount.style.display = 'none';
 
       let q = query;
       if (query === 'Sun') q = 'Sun flare coronal';
@@ -1013,14 +1034,13 @@
       try {
         const res = await fetch(`https://images-api.nasa.gov/search?q=${encodeURIComponent(q)}&media_type=image`);
         const data = await res.json();
-        if (data.collection && data.collection.items.length > 0) {
-          currentNASAData = data.collection.items;
-          // Grab a random image from the top 3 best matching results
-          const item = currentNASAData[Math.floor(Math.random() * Math.min(3, currentNASAData.length))];
-          imgEL.src = item.links[0].href;
-          imgEL.style.cursor = 'pointer';
-          imgEL.title = 'Click to open High-Res NASA Gallery';
-          imgEL.onclick = () => openNASAModal(query);
+
+        // Filter out items without links
+        const items = (data.collection?.items || []).filter(item => item.links && item.links.length > 0);
+
+        if (items.length > 0) {
+          currentNASAData = items.slice(0, 12); // Keep up to 12
+          renderNASACarousel();
         } else {
           container.style.display = 'none';
         }
@@ -1029,6 +1049,43 @@
         console.error("NASA API Error:", e);
       }
     }
+
+    function renderNASACarousel() {
+      if (!currentNASAData || currentNASAData.length === 0) return;
+
+      const imgEL = document.getElementById('nasa-image');
+      const btnPrev = document.getElementById('nasa-prev');
+      const btnNext = document.getElementById('nasa-next');
+      const lblCount = document.getElementById('nasa-counter');
+
+      const item = currentNASAData[currentNASAIndex];
+      imgEL.src = item.links[0].href;
+      imgEL.style.cursor = 'pointer';
+      imgEL.title = 'Click to open Full Gallery';
+      imgEL.onclick = () => openNASAModal(currentNASAQuery);
+
+      if (currentNASAData.length > 1) {
+        btnPrev.style.display = 'block';
+        btnNext.style.display = 'block';
+        lblCount.style.display = 'block';
+        lblCount.textContent = `${currentNASAIndex + 1}/${currentNASAData.length}`;
+      }
+    }
+
+    // Bind carousel buttons
+    document.getElementById('nasa-prev').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!currentNASAData) return;
+      currentNASAIndex = (currentNASAIndex - 1 + currentNASAData.length) % currentNASAData.length;
+      renderNASACarousel();
+    });
+
+    document.getElementById('nasa-next').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!currentNASAData) return;
+      currentNASAIndex = (currentNASAIndex + 1) % currentNASAData.length;
+      renderNASACarousel();
+    });
 
     function openNASAModal(title) {
       if (!currentNASAData) return;
