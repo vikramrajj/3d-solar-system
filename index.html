@@ -855,8 +855,6 @@
       planetObjs.push({ data: pd, group: pGroup, mesh, label: lbl, angle: Math.random() * Math.PI * 2, satObjs });
     });
 
-    // Populate mesh lookup maps after all planets + satellites are built
-    buildMeshMaps();
 
     // ═══════════════════════════════════════════
     //  RAYCASTING
@@ -889,6 +887,9 @@
         p.satObjs.forEach(s => satMeshMap.push(s));
       });
     }
+
+    // Populate mesh lookup maps after all planets + satellites are built
+    buildMeshMaps();
 
     function doRaycast(click = false) {
       raycaster.setFromCamera(mouse, camera);
