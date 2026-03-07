@@ -454,6 +454,15 @@
     <div class="stat"><span class="lbl">Gravity</span><span class="val" id="info-grav">–</span></div>
     <button class="tp-btn" id="btn-focus" style="width:100%;margin-top:12px;background:rgba(80,160,255,.15)">🎯 Track
       Camera</button>
+    <div id="nasa-image-container"
+      style="display:none;margin-top:12px;border-top:1px solid rgba(110,160,255,.2);padding-top:12px;text-align:center">
+      <p
+        style="font-size:.55rem;color:rgba(200,220,255,.45);letter-spacing:.1em;margin-bottom:6px;text-transform:uppercase">
+        NASA Image Archive 🛰</p>
+      <img id="nasa-image" src=""
+        style="width:100%;border-radius:6px;max-height:110px;object-fit:cover;border:1px solid rgba(110,160,255,.15)"
+        alt="NASA API" />
+    </div>
   </div>
 
   <div id="tooltip"></div>
@@ -472,9 +481,16 @@
       <label>Day</label>
       <input type="number" id="tp-day" min="1" max="31" value="7" step="1" />
     </div>
-    <button class="tp-btn" id="btn-travel">⏱ Set Date</button>
-    <button class="tp-btn secondary" id="btn-now">Today</button>
-    <div id="time-mode-badge" class="live">● LIVE</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;gap:8px">
+        <button class="tp-btn" id="btn-travel">⏱ Set Date</button>
+        <button class="tp-btn secondary" id="btn-now">Today</button>
+      </div>
+      <button class="tp-btn" id="btn-jpl"
+        style="background:rgba(255,150,50,.15);border-color:rgba(255,150,50,.3);color:#ffd180;font-size:0.6rem;padding:4px 10px;width:100%">📡
+        Sync NASA JPL</button>
+    </div>
+    <div id="time-mode-badge" class="live" style="align-self: flex-start; margin-top: 4px;">● LIVE</div>
   </div>
 
   <div id="controls">
@@ -930,6 +946,33 @@
       }
     }
 
+    // ── NASA Image API ──
+    async function fetchNASAImage(query) {
+      const container = document.getElementById('nasa-image-container');
+      const imgEL = document.getElementById('nasa-image');
+      container.style.display = 'block';
+      imgEL.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJyZ2JhKDIwLDMwLDcwLDAuNSkiLz48L3N2Zz4='; // subtle dark blue loading state
+
+      let q = query;
+      if (query === 'Sun') q = 'Sun flare coronal';
+      if (query === 'Moon') q = 'Earth Moon surface';
+
+      try {
+        const res = await fetch(`https://images-api.nasa.gov/search?q=${encodeURIComponent(q)}&media_type=image`);
+        const data = await res.json();
+        if (data.collection && data.collection.items.length > 0) {
+          // Grab a random image from the top 3 best matching results
+          const item = data.collection.items[Math.floor(Math.random() * Math.min(3, data.collection.items.length))];
+          imgEL.src = item.links[0].href;
+        } else {
+          container.style.display = 'none';
+        }
+      } catch (e) {
+        container.style.display = 'none';
+        console.error("NASA API Error:", e);
+      }
+    }
+
     function setInfo(name, subtitle, type, diam, dist, period, grav, moons, col) {
       document.getElementById('info-name').textContent = name;
       // Show optional subtitle (e.g. "Moon of Saturn") below the name
@@ -952,6 +995,7 @@
       document.getElementById('info-grav').textContent = grav;
       document.getElementById('info-moons').textContent = moons;
       document.getElementById('info-dot').style.background = col;
+      fetchNASAImage(name);
       infoPanel.classList.add('visible');
     }
 
@@ -1005,6 +1049,70 @@
 
     document.getElementById('btn-travel').addEventListener('click', applyTravel);
     document.getElementById('btn-now').addEventListener('click', resetToNow);
+
+    // ── NASA JPL Horizons API ──
+    const JPL_IDS = { 'Mercury': 199, 'Venus': 299, 'Earth': 399, 'Mars': 499, 'Jupiter': 599, 'Saturn': 699, 'Uranus': 799, 'Neptune': 899 };
+
+    document.getElementById('btn-jpl').addEventListener('click', async function () {
+      const y = parseInt(document.getElementById('tp-year').value) || 2026;
+      const m = Math.max(1, Math.min(12, parseInt(document.getElementById('tp-month').value) || 3));
+      const d = Math.max(1, Math.min(31, parseInt(document.getElementById('tp-day').value) || 7));
+
+      const dateObj = new Date(Date.UTC(y, m - 1, d));
+      const stopDate = new Date(Date.UTC(y, m - 1, d + 1));
+      const startStr = dateObj.toISOString().split('T')[0];
+      const stopStr = stopDate.toISOString().split('T')[0];
+
+      this.textContent = 'Fetching...';
+      this.style.opacity = '0.7';
+
+      const promises = planetObjs.map(async p => {
+        const id = JPL_IDS[p.data.name];
+        if (!id) return;
+        try {
+          const url = `https://ssd.jpl.nasa.gov/api/horizons.api?format=json&EPHEM_TYPE=VECTORS&OBJ_DATA=NO&CENTER='500@10'&COMMAND='${id}'&START_TIME='${startStr}'&STOP_TIME='${stopStr}'&STEP_SIZE='1%20d'`;
+          const res = await fetch(url);
+          const data = await res.json();
+          if (!data.result) return;
+          const txt = data.result;
+          const startIdx = txt.indexOf('$$SOE');
+          const endIdx = txt.indexOf('$$EOE');
+          if (startIdx >= 0 && endIdx >= 0) {
+            const vText = txt.substring(startIdx, endIdx);
+            const matchX = vText.match(/X\s*=\s*([-\d.E+]+)/);
+            const matchY = vText.match(/Y\s*=\s*([-\d.E+]+)/);
+            if (matchX && matchY) {
+              const rawX = parseFloat(matchX[1]);
+              const rawY = parseFloat(matchY[1]);
+              // Calculate ecliptic angle from X and Y Cartesian coords
+              const angle = Math.atan2(rawY, rawX);
+              p.angle = angle;
+              const visX = Math.cos(angle) * p.data.orbitRadius;
+              const visZ = -Math.sin(angle) * p.data.orbitRadius; // ThreeJS Z is negative Y
+              p.group.position.set(visX, 0, visZ);
+            }
+          }
+        } catch (e) { console.error("JPL Error:", e); }
+      });
+
+      await Promise.all(promises);
+      this.textContent = '📡 Sync NASA JPL';
+      this.style.opacity = '1';
+
+      // Update the UI state
+      const jd = julianDay(y, m, d);
+      travelT = jdCenturies(jd);
+      paused = true;
+      document.getElementById('btn-pause').textContent = '▶ Resume';
+      document.getElementById('btn-pause').classList.add('active');
+      setDateDisplay(y, m, d, false);
+      const badge = document.getElementById('time-mode-badge');
+      badge.textContent = 'JPL EXACT';
+      badge.className = '';
+      badge.style.color = '#ffd180';
+      badge.style.borderColor = 'rgba(255,150,50,.3)';
+      badge.style.background = 'rgba(255,150,50,.15)';
+    });
 
     // Set initial date display
     (function () {
