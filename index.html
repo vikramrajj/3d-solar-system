@@ -1082,6 +1082,42 @@
 
     renderer.domElement.addEventListener('click', () => doRaycast(true));
 
+    // ── Touch tap detection for mobile (since preventDefault blocks synthetic click) ──
+    let tapStartPos = null;
+    let tapStartTime = 0;
+
+    renderer.domElement.addEventListener('touchstart', e => {
+      if (e.touches.length === 1) {
+        tapStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        tapStartTime = performance.now();
+      } else {
+        tapStartPos = null; // multi-finger = not a tap
+      }
+    }, { passive: true });
+
+    renderer.domElement.addEventListener('touchend', e => {
+      if (!tapStartPos) return;
+      const elapsed = performance.now() - tapStartTime;
+      if (elapsed > 400) { tapStartPos = null; return; } // too long = drag not tap
+
+      // Check if any remaining touches (means multi-finger gesture ended)
+      if (e.touches.length > 0) { tapStartPos = null; return; }
+
+      const endX = e.changedTouches[0].clientX;
+      const endY = e.changedTouches[0].clientY;
+      const dx = endX - tapStartPos.x;
+      const dy = endY - tapStartPos.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < 15) {
+        // This is a tap! Set mouse position and trigger raycast
+        mouse.x = (endX / window.innerWidth) * 2 - 1;
+        mouse.y = -(endY / window.innerHeight) * 2 + 1;
+        doRaycast(true);
+      }
+      tapStartPos = null;
+    }, { passive: true });
+
     let selectedMesh = null;
     let trackedBodyMesh = null;
 
