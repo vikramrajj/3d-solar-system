@@ -625,21 +625,21 @@
     const PLANETS = [
       {
         name: 'Mercury', type: 'Rocky Planet', color: '#b0b0b0', emissive: '#1a1a1a',
-        radius: 1.5, orbitRadius: 32, rotSpeed: 0.017, revSpeed: 4.14, tilt: 0.034,
+        radius: 0.7, orbitRadius: 32, rotSpeed: 0.017, revSpeed: 4.14, tilt: 0.034,
         diam: '4,879 km', dist: '57.9M km', period: '88 days', day: '58.6 days', gravity: '3.7 m/s²', moons: '0',
         satellites: []
       },
 
       {
         name: 'Venus', type: 'Rocky Planet', color: '#e8c56b', emissive: '#3d2a00',
-        radius: 2.3, orbitRadius: 52, rotSpeed: -0.0041, revSpeed: 1.62, tilt: 3.096,
+        radius: 1.7, orbitRadius: 52, rotSpeed: -0.0041, revSpeed: 1.62, tilt: 3.096,
         diam: '12,104 km', dist: '108.2M km', period: '225 days', day: '243 days (Rev)', gravity: '8.9 m/s²', moons: '0',
         satellites: []
       },
 
       {
         name: 'Earth', type: 'Rocky Planet', color: '#4a90d9', emissive: '#0a1a30',
-        radius: 2.5, orbitRadius: 74, rotSpeed: 1.0, revSpeed: 1.0, tilt: 0.4101,
+        radius: 1.8, orbitRadius: 74, rotSpeed: 1.0, revSpeed: 1.0, tilt: 0.4101,
         diam: '12,742 km', dist: '149.6M km', period: '365 days', day: '24 hours', gravity: '9.8 m/s²', moons: '1',
         earth: true,
         satellites: [
@@ -649,7 +649,7 @@
 
       {
         name: 'Mars', type: 'Rocky Planet', color: '#c1440e', emissive: '#300800',
-        radius: 1.8, orbitRadius: 100, rotSpeed: 0.97, revSpeed: 0.531, tilt: 0.4396,
+        radius: 1.0, orbitRadius: 100, rotSpeed: 0.97, revSpeed: 0.531, tilt: 0.4396,
         diam: '6,779 km', dist: '227.9M km', period: '687 days', day: '24.6 hours', gravity: '3.7 m/s²', moons: '2',
         satellites: [
           { name: 'Phobos', color: '#8a7a70', emissive: '#080604', radius: 0.22, orbitR: 2.9, speed: 85.6 },
@@ -659,7 +659,7 @@
 
       {
         name: 'Jupiter', type: 'Gas Giant', color: '#c88b3a', emissive: '#1a0800',
-        radius: 10.0, orbitRadius: 175, rotSpeed: 2.42, revSpeed: 0.084, tilt: 0.0546, bands: true,
+        radius: 14.0, orbitRadius: 175, rotSpeed: 2.42, revSpeed: 0.084, tilt: 0.0546, bands: true,
         diam: '139,820 km', dist: '778.5M km', period: '11.9 yrs', day: '9.9 hours', gravity: '24.8 m/s²', moons: '95',
         satellites: [
           { name: 'Metis', color: '#887060', emissive: '#080400', radius: 0.14, orbitR: 11.5, speed: 92.6 },
@@ -675,7 +675,7 @@
 
       {
         name: 'Saturn', type: 'Gas Giant', color: '#e4d191', emissive: '#1a1400',
-        radius: 8.5, orbitRadius: 255, rotSpeed: 2.24, revSpeed: 0.0338, tilt: 0.4665, bands: true, rings: true,
+        radius: 11.5, orbitRadius: 255, rotSpeed: 2.24, revSpeed: 0.0338, tilt: 0.4665, bands: true, rings: true,
         diam: '116,460 km', dist: '1.43B km', period: '29.5 yrs', day: '10.7 hours', gravity: '10.4 m/s²', moons: '146',
         satellites: [
           { name: 'Mimas', color: '#d0c8c0', emissive: '#080808', radius: 0.26, orbitR: 11.0, speed: 29.0 },
@@ -692,7 +692,7 @@
 
       {
         name: 'Uranus', type: 'Ice Giant', color: '#7de8e8', emissive: '#003a3a',
-        radius: 5.4, orbitRadius: 330, rotSpeed: -1.39, revSpeed: 0.0119, tilt: 1.706, rings: true, ringsNarrow: true,
+        radius: 6.2, orbitRadius: 330, rotSpeed: -1.39, revSpeed: 0.0119, tilt: 1.706, rings: true, ringsNarrow: true,
         diam: '50,724 km', dist: '2.87B km', period: '84 yrs', day: '17.2 hours (Rev)', gravity: '8.7 m/s²', moons: '28',
         satellites: [
           { name: 'Miranda', color: '#a0a8b4', emissive: '#080808', radius: 0.22, orbitR: 7.5, speed: 19.3 },
@@ -705,7 +705,7 @@
 
       {
         name: 'Neptune', type: 'Ice Giant', color: '#3f54ba', emissive: '#000820',
-        radius: 5.0, orbitRadius: 404, rotSpeed: 1.49, revSpeed: 0.006, tilt: 0.4944,
+        radius: 5.8, orbitRadius: 404, rotSpeed: 1.49, revSpeed: 0.006, tilt: 0.4944,
         diam: '49,244 km', dist: '4.50B km', period: '165 yrs', day: '16.1 hours', gravity: '11.2 m/s²', moons: '16',
         satellites: [
           { name: 'Naiad', color: '#8090a4', emissive: '#080810', radius: 0.14, orbitR: 6.0, speed: 92.9 },
@@ -866,7 +866,7 @@
 
     // ── Sun ──
     const sunG = new THREE.Group(); scene.add(sunG);
-    [{ r: 12, c: 0xffcc33 }, { r: 16, c: 0xff8800, o: .055 }, { r: 22, c: 0xff4400, o: .028 }, { r: 32, c: 0xff2200, o: .012 }].forEach((l, i) => {
+    [{ r: 20, c: 0xffcc33 }, { r: 26, c: 0xff8800, o: .055 }, { r: 34, c: 0xff4400, o: .028 }, { r: 48, c: 0xff2200, o: .012 }].forEach((l, i) => {
       const m = new THREE.Mesh(new THREE.SphereGeometry(l.r, 64, 64), new THREE.MeshBasicMaterial({ color: l.c, transparent: i > 0, opacity: l.o || 1 }));
       sunG.add(m);
     });
@@ -1252,7 +1252,7 @@
         const items = (data.collection?.items || []).filter(item => item.links && item.links.length > 0);
 
         if (items.length > 0) {
-          currentNASAData = items.slice(0, 12); // Keep up to 12
+          currentNASAData = items.slice(0, 36); // Keep up to 36
           renderNASACarousel();
         } else {
           container.style.display = 'none';
@@ -1306,8 +1306,8 @@
       const gallery = document.getElementById('modal-gallery');
       gallery.innerHTML = '';
 
-      // Render up to 12 high-res images from the current fetch results
-      currentNASAData.slice(0, 12).forEach(item => {
+      // Render up to 36 high-res images from the current fetch results
+      currentNASAData.forEach(item => {
         if (item.links && item.links.length > 0) {
           const imgWrap = document.createElement('div');
           imgWrap.style.cssText = 'background:rgba(20,30,70,0.5);border:1px solid rgba(110,160,255,.25);border-radius:10px;padding:8px;width:400px;text-align:center;display:flex;flex-direction:column;justify-content:space-between;transition:transform 0.2s,border-color 0.2s;cursor:pointer';
@@ -1564,7 +1564,7 @@
           if (s.mesh === mesh) { bodyRadius = s.data.radius; break; }
         }
       }
-      if (mesh === sunMesh) bodyRadius = 12;
+      if (mesh === sunMesh) bodyRadius = 20;
 
       trackedBodyMesh = mesh;
       topDown = false;
