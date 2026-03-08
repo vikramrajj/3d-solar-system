@@ -428,10 +428,338 @@
       letter-spacing: .15em;
       text-transform: uppercase
     }
+
+    /* ── Onboarding hint overlay ── */
+    #onboard {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 2, 12, .72);
+      backdrop-filter: blur(4px);
+      animation: fadeInBoard .6s ease both;
+      cursor: pointer;
+    }
+
+    @keyframes fadeInBoard {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    #onboard.hide {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .5s
+    }
+
+    #onboard h3 {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #7ee8fa;
+      letter-spacing: .12em;
+      margin-bottom: 28px;
+    }
+
+    .hint-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(10, 20, 60, .7);
+      border: 1px solid rgba(110, 160, 255, .2);
+      border-radius: 12px;
+      padding: 12px 22px;
+      margin: 6px 0;
+      min-width: 300px;
+    }
+
+    .hint-icon {
+      font-size: 1.5rem;
+      width: 36px;
+      text-align: center
+    }
+
+    .hint-text {
+      font-size: .82rem;
+      color: rgba(200, 225, 255, .85);
+      line-height: 1.4
+    }
+
+    #onboard-dismiss {
+      margin-top: 28px;
+      background: linear-gradient(135deg, rgba(126, 232, 250, .18), rgba(128, 255, 114, .18));
+      border: 1px solid rgba(126, 232, 250, .4);
+      color: #7ee8fa;
+      padding: 10px 32px;
+      border-radius: 40px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .78rem;
+      cursor: pointer;
+      letter-spacing: .06em;
+      transition: all .2s;
+    }
+
+    #onboard-dismiss:hover {
+      background: rgba(126, 232, 250, .3);
+      color: #fff
+    }
+
+    #onboard-note {
+      margin-top: 12px;
+      font-size: .58rem;
+      color: rgba(200, 220, 255, .3);
+      letter-spacing: .1em
+    }
+
+    /* ── Search bar ── */
+    #search-wrap {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    #planet-search {
+      background: rgba(6, 10, 28, .88);
+      border: 1px solid rgba(110, 160, 255, .28);
+      border-radius: 40px;
+      color: #c8dcff;
+      padding: 7px 18px 7px 38px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .75rem;
+      outline: none;
+      width: 200px;
+      backdrop-filter: blur(10px);
+      transition: border-color .2s, width .3s;
+    }
+
+    #planet-search::placeholder {
+      color: rgba(180, 210, 255, .35)
+    }
+
+    #planet-search:focus {
+      border-color: rgba(126, 232, 250, .5);
+      width: 240px
+    }
+
+    #search-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(126, 232, 250, .5);
+      font-size: .85rem;
+      pointer-events: none;
+    }
+
+    #search-results {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: rgba(6, 10, 28, .96);
+      border: 1px solid rgba(110, 160, 255, .25);
+      border-radius: 12px;
+      overflow: hidden;
+      display: none;
+      backdrop-filter: blur(14px);
+    }
+
+    .sr-item {
+      padding: 9px 16px;
+      font-size: .75rem;
+      color: #c8dcff;
+      cursor: pointer;
+      transition: background .15s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sr-item:hover {
+      background: rgba(80, 140, 255, .18);
+      color: #fff
+    }
+
+    /* ── Return button ── */
+    #btn-return {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 20, 50, .88);
+      border: 1px solid rgba(126, 232, 250, .35);
+      color: #7ee8fa;
+      padding: 8px 22px;
+      border-radius: 40px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .72rem;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      z-index: 25;
+      display: none;
+      transition: all .2s;
+      letter-spacing: .05em;
+    }
+
+    #btn-return:hover {
+      background: rgba(126, 232, 250, .2);
+      color: #fff
+    }
+
+    /* ── Speed readout ── */
+    #speed-val {
+      font-size: .65rem;
+      color: #7ee8fa;
+      font-family: 'Orbitron', monospace;
+      text-align: right;
+      letter-spacing: .06em;
+    }
+
+    /* ── Fun fact ── */
+    #fun-fact {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: rgba(126, 232, 250, .06);
+      border: 1px solid rgba(126, 232, 250, .15);
+      border-radius: 10px;
+      font-size: .67rem;
+      color: rgba(200, 225, 255, .75);
+      line-height: 1.55;
+      display: none;
+      font-style: italic;
+    }
+
+    #fun-fact::before {
+      content: '💡 ';
+      font-style: normal
+    }
+
+    /* ── NASA pulse badge ── */
+    @keyframes nasaPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(126, 232, 250, .45)
+      }
+
+      50% {
+        box-shadow: 0 0 0 5px rgba(126, 232, 250, 0)
+      }
+    }
+
+    .nasa-pulse {
+      animation: nasaPulse 1.8s ease infinite
+    }
+
+    /* ── Planet hover glow ring ── */
+    #hover-ring {
+      position: fixed;
+      pointer-events: none;
+      z-index: 5;
+      border: 2px solid rgba(126, 232, 250, .65);
+      border-radius: 50%;
+      transition: opacity .15s;
+      opacity: 0;
+      box-shadow: 0 0 12px rgba(126, 232, 250, .4);
+    }
+
+    /* ── Mobile: collapse time panel ── */
+    #time-toggle {
+      display: none;
+    }
+
+    @media (max-width:768px) {
+      #time-toggle {
+        display: flex;
+        position: fixed;
+        bottom: 72px;
+        left: 16px;
+        z-index: 20;
+        background: rgba(6, 10, 28, .88);
+        border: 1px solid rgba(110, 160, 255, .25);
+        border-radius: 40px;
+        color: #b4d4ff;
+        padding: 7px 14px;
+        font-size: .72rem;
+        cursor: pointer;
+        align-items: center;
+        gap: 6px;
+        backdrop-filter: blur(10px);
+      }
+
+      #time-panel {
+        display: none
+      }
+
+      #time-panel.mobile-open {
+        display: flex;
+        bottom: 110px;
+        flex-wrap: wrap;
+        max-width: 92vw
+      }
+
+      #controls {
+        gap: 5px
+      }
+
+      .ctrl-btn {
+        padding: 6px 10px;
+        font-size: .62rem
+      }
+
+      #search-wrap {
+        top: auto;
+        bottom: 72px;
+        right: 16px;
+        left: auto;
+        transform: none
+      }
+
+      #planet-search {
+        width: 150px
+      }
+
+      #planet-search:focus {
+        width: 180px
+      }
+
+      #btn-return {
+        top: auto;
+        bottom: 120px
+      }
+    }
   </style>
 </head>
 
 <body>
+  <!-- ONBOARDING OVERLAY -->
+  <div id="onboard">
+    <h3>✦ COSMIC EXPLORER</h3>
+    <div class="hint-row"><span class="hint-icon">🖱️</span><span class="hint-text"><b>Drag</b> to rotate &nbsp;·&nbsp;
+        <b>Scroll / Pinch</b> to zoom &nbsp;·&nbsp; <b>Right-drag</b> to pan</span></div>
+    <div class="hint-row"><span class="hint-icon">🪐</span><span class="hint-text"><b>Click or tap any planet</b> to fly
+        in close and open its NASA photo gallery</span></div>
+    <div class="hint-row"><span class="hint-icon">⏱️</span><span class="hint-text"><b>Time Travel</b> — set any date
+        from 1800–2200 to see real planetary positions</span></div>
+    <div class="hint-row"><span class="hint-icon">🔍</span><span class="hint-text"><b>Search</b> any planet by name to
+        instantly fly there</span></div>
+    <button id="onboard-dismiss">Let's Explore →</button>
+    <p id="onboard-note">Tap anywhere to dismiss</p>
+  </div>
+
   <div id="loader">
     <h2>COSMIC EXPLORER</h2>
     <div class="lbar">
@@ -439,6 +767,19 @@
     </div>
     <p>Initialising orbital mechanics…</p>
   </div>
+
+  <!-- PLANET SEARCH -->
+  <div id="search-wrap">
+    <span id="search-icon">🔍</span>
+    <input type="text" id="planet-search" placeholder="Search planet…" autocomplete="off" />
+    <div id="search-results"></div>
+  </div>
+
+  <!-- RETURN BUTTON -->
+  <button id="btn-return">← Solar System</button>
+
+  <!-- HOVER GLOW RING -->
+  <div id="hover-ring"></div>
 
   <div id="hud">
     <div id="title-block">
@@ -460,12 +801,13 @@
     <div class="stat"><span class="lbl">Rotation</span><span class="val" id="info-day">–</span></div>
     <div class="stat"><span class="lbl">Moons</span><span class="val" id="info-moons">–</span></div>
     <div class="stat"><span class="lbl">Gravity</span><span class="val" id="info-grav">–</span></div>
-    <button class="tp-btn" id="btn-focus" style="width:100%;margin-top:12px;background:rgba(80,160,255,.15)">🎯 Track
-      Camera</button>
+    <div id="fun-fact"></div>
+    <button class="tp-btn" id="btn-focus" style="width:100%;margin-top:12px;background:rgba(80,160,255,.15)">🔭 Fly To
+      Planet</button>
     <div id="nasa-image-container"
       style="display:none;margin-top:14px;border-top:1px solid rgba(110,160,255,.2);padding-top:14px;text-align:center">
-      <p
-        style="font-size:.6rem;color:rgba(200,220,255,.55);letter-spacing:.1em;margin-bottom:8px;text-transform:uppercase;font-weight:500">
+      <p id="nasa-badge"
+        style="font-size:.6rem;color:rgba(200,220,255,.55);letter-spacing:.1em;margin-bottom:8px;text-transform:uppercase;font-weight:500;display:inline-block;padding:3px 10px;border-radius:20px">
         🛰 NASA IMAGE ARCHIVE
       </p>
       <div
@@ -520,15 +862,19 @@
     <div id="time-mode-badge" class="live" style="align-self: flex-start; margin-top: 4px;">● LIVE</div>
   </div>
 
+  <!-- Mobile time panel toggle -->
+  <button id="time-toggle">🕐 Time Travel</button>
+
   <div id="controls">
     <button class="ctrl-btn" id="btn-orbits">Orbit Rings</button>
-    <button class="ctrl-btn" id="btn-labels">Labels</button>
+    <button class="ctrl-btn active" id="btn-labels">Labels</button>
     <button class="ctrl-btn" id="btn-reset">Reset Camera</button>
-    <button class="ctrl-btn" id="btn-pause" id="btn-pause">⏸ Pause</button>
+    <button class="ctrl-btn" id="btn-pause">⏸ Pause</button>
     <button class="ctrl-btn" id="btn-top">Top View</button>
   </div>
 
   <div id="speed-wrap">
+    <span id="speed-val">1.0×</span>
     <span id="speed-label">Speed</span>
     <input type="range" id="speed-slider" min="0.05" max="8" step="0.05" value="1" />
   </div>
@@ -1254,6 +1600,9 @@
         if (items.length > 0) {
           currentNASAData = items.slice(0, 36); // Keep up to 36
           renderNASACarousel();
+          // Pulse the NASA badge to draw attention
+          const badge = document.getElementById('nasa-badge');
+          if (badge) { badge.classList.remove('nasa-pulse'); void badge.offsetWidth; badge.classList.add('nasa-pulse'); setTimeout(() => badge.classList.remove('nasa-pulse'), 6000); }
         } else {
           container.style.display = 'none';
         }
@@ -1366,6 +1715,11 @@
       document.getElementById('info-grav').textContent = grav;
       document.getElementById('info-moons').textContent = moons;
       document.getElementById('info-dot').style.background = col;
+      // Show fun fact if available
+      const factEl = document.getElementById('fun-fact');
+      const fact = FUN_FACTS[name];
+      if (fact) { factEl.textContent = fact; factEl.style.display = 'block'; }
+      else { factEl.style.display = 'none'; }
       fetchNASAImage(name);
       infoPanel.classList.add('visible');
     }
@@ -1376,7 +1730,20 @@
     const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     let travelT = null; // Julian centuries from J2000; null = live animation
     let paused = false, simSpeed = 1.0, topDown = false;
-    let showOrbits = true, showLabels = true;
+    let showOrbits = true, showLabels = true; // labels ON by default
+
+    // ── Fun facts per planet ──
+    const FUN_FACTS = {
+      'Sun': 'The Sun contains 99.86% of all the mass in our entire Solar System.',
+      'Mercury': 'A day on Mercury (176 Earth days) is longer than its year (88 Earth days).',
+      'Venus': 'Venus rotates backwards — on Venus, the Sun rises in the west and sets in the east.',
+      'Earth': 'Earth is the only known planet with active plate tectonics and liquid water on the surface.',
+      'Mars': 'Olympus Mons on Mars is the tallest volcano in the Solar System at 21.9 km high.',
+      'Jupiter': 'Jupiter\'s Great Red Spot is a storm that has been raging for over 350 years.',
+      'Saturn': 'Saturn is the least dense planet — it would float in water if you had a big enough ocean.',
+      'Uranus': 'Uranus rotates on its side with an axial tilt of 98°, so its poles face the Sun.',
+      'Neptune': 'Neptune has the fastest winds in the Solar System, reaching 2,100 km/h.',
+    };
 
     function setDateDisplay(y, m, d, live) {
       document.getElementById('date-text').textContent = `${MONTHS[m - 1]} ${d}, ${y}`;
@@ -1511,7 +1878,7 @@
       });
       this.classList.toggle('active', !showLabels);
     });
-    document.getElementById('btn-reset').addEventListener('click', () => { trackedBodyMesh = null; flyToTarget = null; controls.reset(); topDown = false; document.getElementById('btn-top').classList.remove('active'); });
+    document.getElementById('btn-reset').addEventListener('click', () => { trackedBodyMesh = null; flyToTarget = null; controls.reset(); topDown = false; document.getElementById('btn-top').classList.remove('active'); document.getElementById('btn-return').style.display = 'none'; });
     document.getElementById('btn-pause').addEventListener('click', function () {
       if (travelT !== null) { travelT = null; resetToNow(); return; }
       paused = !paused;
@@ -1524,7 +1891,79 @@
       else { trackedBodyMesh = null; controls.reset(); }
       this.classList.toggle('active', topDown);
     });
-    document.getElementById('speed-slider').addEventListener('input', e => simSpeed = parseFloat(e.target.value));
+    document.getElementById('speed-slider').addEventListener('input', e => {
+      simSpeed = parseFloat(e.target.value);
+      document.getElementById('speed-val').textContent = simSpeed.toFixed(1) + '×';
+    });
+
+    // ── Return to solar system button ──
+    const btnReturn = document.getElementById('btn-return');
+    btnReturn.addEventListener('click', () => {
+      trackedBodyMesh = null; flyToTarget = null;
+      controls.reset();
+      btnReturn.style.display = 'none';
+    });
+
+    // ── Mobile: time panel toggle ──
+    document.getElementById('time-toggle').addEventListener('click', () => {
+      document.getElementById('time-panel').classList.toggle('mobile-open');
+    });
+
+    // ── Onboarding overlay ──
+    const onboard = document.getElementById('onboard');
+    function dismissOnboard() {
+      onboard.classList.add('hide');
+      setTimeout(() => onboard.remove(), 600);
+      try { localStorage.setItem('ce-onboard-seen', '1'); } catch (e) { }
+    }
+    if (localStorage.getItem('ce-onboard-seen')) {
+      onboard.remove();
+    } else {
+      document.getElementById('onboard-dismiss').addEventListener('click', e => { e.stopPropagation(); dismissOnboard(); });
+      onboard.addEventListener('click', dismissOnboard);
+    }
+
+    // ── Planet search ──
+    const searchInput = document.getElementById('planet-search');
+    const searchResults = document.getElementById('search-results');
+    const SEARCH_PLANETS = ['Sun', 'Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune',
+      'Moon', 'Io', 'Europa', 'Ganymede', 'Callisto', 'Titan', 'Enceladus', 'Triton', 'Phobos', 'Deimos'];
+    const SEARCH_ICONS = {
+      Sun: '☀️', Mercury: '⚫', Venus: '🟡', Earth: '🌍', Mars: '🔴',
+      Jupiter: '🟠', Saturn: '💛', Uranus: '🔵', Neptune: '🔵', Moon: '🌕'
+    };
+
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.trim().toLowerCase();
+      searchResults.innerHTML = '';
+      if (!q) { searchResults.style.display = 'none'; return; }
+      const matches = SEARCH_PLANETS.filter(n => n.toLowerCase().startsWith(q));
+      if (!matches.length) { searchResults.style.display = 'none'; return; }
+      matches.slice(0, 6).forEach(name => {
+        const div = document.createElement('div');
+        div.className = 'sr-item';
+        div.innerHTML = `<span>${SEARCH_ICONS[name] || '🪐'}</span><span>${name}</span>`;
+        div.addEventListener('click', () => {
+          searchInput.value = ''; searchResults.style.display = 'none';
+          // find and fly to matching mesh
+          if (name === 'Sun') { flyToBody(sunMesh); return; }
+          for (const p of planetObjs) {
+            if (p.data.name === name) { flyToBody(p.mesh); return; }
+            for (const s of p.satObjs) {
+              if (s.data.name === name) { flyToBody(s.mesh); return; }
+            }
+          }
+        });
+        searchResults.appendChild(div);
+      });
+      searchResults.style.display = 'block';
+    });
+    document.addEventListener('click', e => {
+      if (!document.getElementById('search-wrap').contains(e.target)) searchResults.style.display = 'none';
+    });
+    searchInput.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { searchInput.value = ''; searchResults.style.display = 'none'; }
+    });
 
     document.getElementById('zoom-slider').addEventListener('input', e => {
       if (topDown) return;
@@ -1569,6 +2008,7 @@
       trackedBodyMesh = mesh;
       topDown = false;
       document.getElementById('btn-top').classList.remove('active');
+      document.getElementById('btn-return').style.display = 'flex';
 
       flyToTarget = { mesh, radius: bodyRadius };
       flyProgress = 0;
@@ -1641,6 +2081,34 @@
       }
 
       doRaycast();
+
+      // ── Hover ring: project hovered planet to screen coords ──
+      const hoverRingEl = document.getElementById('hover-ring');
+      const hoverHits = raycaster.intersectObjects([sunMesh, ...planetMeshMap], false);
+      if (hoverHits.length > 0) {
+        const hoveredMesh = hoverHits[0].object;
+        const worldPos = new THREE.Vector3();
+        hoveredMesh.getWorldPosition(worldPos);
+        const projected = worldPos.clone().project(camera);
+        const sx = (projected.x * 0.5 + 0.5) * window.innerWidth;
+        const sy = (-projected.y * 0.5 + 0.5) * window.innerHeight;
+        // Estimate screen radius from mesh geometry
+        let meshRadius = 5;
+        for (const p of planetObjs) { if (p.mesh === hoveredMesh) { meshRadius = p.data.radius; break; } }
+        if (hoveredMesh === sunMesh) meshRadius = 20;
+        const dist = camera.position.distanceTo(worldPos);
+        const screenR = Math.max(18, (meshRadius / dist) * window.innerHeight * 1.1);
+        hoverRingEl.style.left = (sx - screenR) + 'px';
+        hoverRingEl.style.top = (sy - screenR) + 'px';
+        hoverRingEl.style.width = (screenR * 2) + 'px';
+        hoverRingEl.style.height = (screenR * 2) + 'px';
+        hoverRingEl.style.opacity = '1';
+        document.body.style.cursor = 'pointer';
+      } else {
+        hoverRingEl.style.opacity = '0';
+        document.body.style.cursor = 'default';
+      }
+
       renderer.render(scene, camera);
     }
 
